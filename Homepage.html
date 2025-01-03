@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jail Management System</title>
+    <style>
+        /* Sidebar styling */
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            width: 15%;
+            background-color: #ada1a1;
+            height: 100vh; /* Full viewport height */
+            position: fixed;
+            overflow: auto;
+        }
+
+        ul li a {
+            display: block;
+            color: #000;
+            text-align: center;
+            padding: 12px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        ul li a:hover {
+            background-color: #888;
+            color: white;
+        }
+
+        /* Button styling */
+        .button-container {
+            margin-left: 18%;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            width: 30%;
+            height: 150px;
+            font-size: 20px;
+            border-radius: 8px;
+            transition: background-color 0.4s, transform 0.2s;
+            background-color: #ff0101;
+            color: white;
+            border: none;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #cc0000;
+            transform: scale(1.05);
+        }
+
+        /* Quick Stats Section */
+        .stats-container {
+            margin-left: 18%;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stats-card {
+            width: 200px;
+            padding: 20px;
+            background: #f4f4f4;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stats-card h3 {
+            margin: 0 0 10px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .stats-card p {
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+            color: #555;
+        }
+    </style>
+    <script>
+        function navigateTo(page) {
+            // Replace these links with actual pages in your system
+            const pages = {
+                inmate: "inmate_management.html",
+                staff: "staff_management.html",
+                incidents: "incident_reporting.html"
+            };
+            window.location.assign(pages[page]);
+        }
+    </script>
+</head>
+<body>
+    <header style="background-color: #333; color: white; padding: 10px; text-align: center;">
+        <h1>Jail Management System</h1>
+        <p>Manage inmates, staff, and incidents efficiently</p>
+    </header>
+    
+    <!-- Sidebar Navigation -->
+    <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Calendar</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">About</a></li>
+    </ul>
+
+    <!-- Quick Stats Section -->
+    <div class="stats-container">
+        <div class="stats-card">
+            <h3>Total Inmates</h3>
+            <p>120</p>
+        </div>
+        <div class="stats-card">
+            <h3>Staff Members</h3>
+            <p>25</p>
+        </div>
+        <div class="stats-card">
+            <h3>Upcoming Visits</h3>
+            <p>15</p>
+        </div>
+    </div>
+
+    <!-- Button Section -->
+    <div class="button-container">
+        <button onclick="navigateTo('inmate')">Inmate Record Management</button>
+        <button onclick="navigateTo('staff')">Staff Scheduling and Management</button>
+        <button onclick="navigateTo('incidents')">Incident Tracking or Reporting</button>
+    </div>
+</body>
+</html>

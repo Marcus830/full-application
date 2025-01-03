@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inmate Management</title>
+    <style>
+        /* Sidebar styling */
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            width: 15%;
+            background-color: #ada1a1;
+            height: 100vh; /* Full viewport height */
+            position: fixed;
+            overflow: auto;
+        }
+
+        ul li a {
+            display: block;
+            color: #000;
+            text-align: center;
+            padding: 12px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        ul li a:hover {
+            background-color: #888;
+            color: white;
+        }
+        table{
+            margin-left: 18%;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .search-bar{
+            margin-left: 18%;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        #searchInput{
+            width: 75%; /* Full-width */
+            padding: 12px 20px 12px 40px; /* Add some padding */
+            border: 1px solid #0e0d0d; /* Add a black border */
+            background-position: 10px 12px; /* Position the search icon */
+            background-image: url('/css/searchicon.png'); /* Add a search icon to input */
+            border-radius: 2%;
+        }
+        table{
+            width: 75%; /* Full-width */
+            border: 2px solid #ddd; /* Add a grey border */
+            font-size: 18px; /* Increase font-size */
+        }
+        th, td {
+            text-align: left; /* Left-align text */
+            padding: 12px; /* Add padding */
+        }
+        tr {
+            /* Add a bottom border to all table rows */
+            border-bottom: 1px solid #ddd;
+        }
+        tr.header, tr:hover {
+            /* Add a grey background color to the table header and on hover */
+            background-color: #f1f1f1;
+        }
+    </style>
+    <script>
+         function navigateTo(page) {
+            // Replace these links with actual pages in your system
+            const pages = {
+                home: "Homepage.html",
+                staff: "staff_management.html",
+                incidents: "incident_reporting.html"
+            };
+            window.location.assign(pages[page]);
+        }
+        async function fetchInmates() {
+            try {
+                const response = await fetch('http://localhost:5000/inmates');
+                const inmates = await response.json();
+
+                const tableBody = document.getElementById('inmateTableBody');
+                tableBody.innerHTML = ''; // Clear previous data
+
+                inmates.forEach((inmate) => {
+                    const row = `
+                        <tr>
+                            <td>${inmate._id}</td>
+                            <td>${inmate.name}</td>
+                            <td>${inmate.crime}</td>
+                            <td>${inmate.sentenceDuration} years</td>
+                            <td>
+                                <button onclick="viewInmate('${inmate._id}')">View</button>
+                                <button onclick="deleteInmate('${inmate._id}')">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.insertAdjacentHTML('beforeend', row);
+                });
+            } catch (error) {
+                console.error('Error fetching inmates:', error);
+            }
+            }
+
+        // Call fetchInmates to populate the table on page load
+        fetchInmates();
+
+        async function addInmate(event) {
+            event.preventDefault(); // Prevent form submission from reloading the page
+
+            const name = document.getElementById('name').value;
+            const crime = document.getElementById('crime').value;
+            const sentenceDuration = document.getElementById('sentenceDuration').value;
+            const arrestDate = document.getElementById('arrestDate').value;
+
+            const inmateData = { name, crime, sentenceDuration, arrestDate };
+
+            try {
+                const response = await fetch('http://localhost:5000/inmates', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(inmateData),
+                });
+                const newInmate = await response.json();
+                console.log('Inmate added:', newInmate);
+                fetchInmates(); // Refresh the table
+            } catch (error) {
+                console.error('Error adding inmate:', error);
+            }
+        }
+
+        async function deleteInmate(id) {
+            try {
+                const response = await fetch(`http://localhost:5000/inmates/${id}`, { method: 'DELETE' });
+                const result = await response.json();
+                console.log(result.message);
+                fetchInmates(); // Refresh the table
+            } catch (error) {
+                console.error('Error deleting inmate:', error);
+            }
+        }
+
+        async function viewInmate(id) {
+            try {
+                const response = await fetch(`http://localhost:5000/inmates/${id}`);
+                const inmate = await response.json();
+
+                // Navigate to the bio page and pass inmate details
+                localStorage.setItem('selectedInmate', JSON.stringify(inmate));
+                window.location.href = 'inmate_bio.html';
+            } catch (error) {
+                console.error('Error fetching inmate:', error);
+            }
+        }
+
+    </script>
+</head>
+<body>
+    <header style="background-color: #333; color: white; padding: 10px; text-align: center;">
+        <h1>Inmate Management System</h1>
+        <p>Managing Inmates</p>
+    </header>
+    
+    <!-- Sidebar Navigation -->
+    <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Calendar</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">About</a></li>
+    </ul>
+    <div class="search-bar">
+        <input type="text" placeholder="Search inmates..." id="searchInput" />
+        <button onclick="searchInmates()">Search</button>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Crime</th>
+                <th>Sentence Duration</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="inmateTableBody">
+            <!-- Rows dynamically populated via JavaScript -->
+        </tbody>
+    </table>
+    
+    <button onclick="openAddInmateForm()">Add New Inmate</button>
+    
+    <form id="addInmateForm" onsubmit="addInmate(event)">
+        <input type="text" id="name" placeholder="Name" required />
+        <input type="text" id="crime" placeholder="Crime" required />
+        <input type="number" id="sentenceDuration" placeholder="Sentence Duration (years)" required />
+        <input type="date" id="arrestDate" required />
+        <button type="submit">Add Inmate</button>
+    </form>
+    
+
+</body>
+</html>
