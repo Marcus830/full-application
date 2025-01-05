@@ -82,7 +82,7 @@
         }
         async function fetchInmates() {
             try {
-                const response = await fetch('http://localhost:5000/inmates');
+                const response = await fetch('http://localhost:3000');
                 const inmates = await response.json();
 
                 const tableBody = document.getElementById('inmateTableBody');
@@ -122,7 +122,7 @@
             const inmateData = { name, crime, sentenceDuration, arrestDate };
 
             try {
-                const response = await fetch('http://localhost:5000/inmates', {
+                const response = await fetch('http://localhost:5000/inmate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(inmateData),
@@ -137,7 +137,7 @@
 
         async function deleteInmate(id) {
             try {
-                const response = await fetch(`http://localhost:5000/inmates/${id}`, { method: 'DELETE' });
+                const response = await fetch(`http://localhost:5000/inmate/${id}`, { method: 'DELETE' });
                 const result = await response.json();
                 console.log(result.message);
                 fetchInmates(); // Refresh the table

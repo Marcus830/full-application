@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* Sidebar styling */
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            width: 15%;
+            background-color: #ada1a1;
+            height: 100vh; /* Full viewport height */
+            position: fixed;
+            overflow: auto;
+        }
+
+        ul li a {
+            display: block;
+            color: #000;
+            text-align: center;
+            padding: 12px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        ul li a:hover {
+            background-color: #888;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header style="background-color: #333; color: white; padding: 10px; text-align: center;">
+        <h1>Inmate Management System</h1>
+        <p>Managing Inmates</p>
+    </header>
+    
+    <!-- Sidebar Navigation -->
+    <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Calendar</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">About</a></li>
+    </ul>
+
+    <div id="bioContainer"></div>
+<script>
+    const inmate = JSON.parse(localStorage.getItem('selectedInmate'));
+
+    const bioContainer = document.getElementById('bioContainer');
+    bioContainer.innerHTML = `
+        <h2>${inmate.name}</h2>
+        <p><strong>Crime:</strong> ${inmate.crime}</p>
+        <p><strong>Sentence:</strong> ${inmate.sentenceDuration} years</p>
+        <p><strong>Arrest Date:</strong> ${new Date(inmate.arrestDate).toLocaleDateString()}</p>
+    `;
+</script>
+
+    
+</body>
+</html>

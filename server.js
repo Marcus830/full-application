@@ -7,6 +7,12 @@ const cors = require('cors'); /* Middleware that allows your server to accept re
 // Initialize the app
 const app = express(); /*Creates an instance of an Express application. This is your main server object where you define routes and middleware. */
 
+const corsOptions = {
+  origin: "http://127.0.0.1:3000",
+};
+
+app.use(cors(corsOptions));
+
 // Middleware setup
 /* */
 app.use(bodyParser.json()); /* Ensures the server can process incoming JSON data from requests.*/
@@ -33,7 +39,7 @@ const Inmate = mongoose.model('Inmate', inmateSchema);
 // Routes
 // Get all inmates
 
-app.get('/inmates', async (req, res) => {       /*Defines a route for GET requests to /inmates.*/
+app.get('/inmate', async (req, res) => {       /*Defines a route for GET requests to /inmates.*/
     try {
         const inmates = await Inmate.find();  /*Fetches all records from the Inmate collection. */
         res.json(inmates);   /*Sends the fetched records back to the client as JSON.*/
@@ -43,7 +49,7 @@ app.get('/inmates', async (req, res) => {       /*Defines a route for GET reques
 });
 
 // Add a new inmate
-app.post('/inmates', async (req, res) => {
+app.post('/inmate', async (req, res) => {
     try {
         const newInmate = new Inmate(req.body);
         await newInmate.save();
@@ -54,7 +60,7 @@ app.post('/inmates', async (req, res) => {
 });
 
 // Update an inmate
-app.put('/inmates/:id', async (req, res) => {
+app.put('/inmate/:id', async (req, res) => {
     try {
         const updatedInmate = await Inmate.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.json(updatedInmate);
@@ -64,7 +70,7 @@ app.put('/inmates/:id', async (req, res) => {
 });
 
 // Delete an inmate
-app.delete('/inmates/:id', async (req, res) => {
+app.delete('/inmate/:id', async (req, res) => {
     try {
         await Inmate.findByIdAndDelete(req.params.id);
         res.json({ message: 'Inmate deleted successfully' });
@@ -74,7 +80,7 @@ app.delete('/inmates/:id', async (req, res) => {
 });
 
 // Start the server
-const PORT = 5000; /* Starts the server and listens for requests on the specified port. */
+const PORT = 3000; /* Starts the server and listens for requests on the specified port. */
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 
