@@ -80,85 +80,69 @@
             };
             window.location.assign(pages[page]);
         }
+
+        /*
+        const apiUrl = 'http://localhost:27016/inmate';
+
         async function fetchInmates() {
             try {
-                const response = await fetch('http://localhost:3000');
-                const inmates = await response.json();
-
-                const tableBody = document.getElementById('inmateTableBody');
-                tableBody.innerHTML = ''; // Clear previous data
-
-                inmates.forEach((inmate) => {
-                    const row = `
-                        <tr>
-                            <td>${inmate._id}</td>
-                            <td>${inmate.name}</td>
-                            <td>${inmate.crime}</td>
-                            <td>${inmate.sentenceDuration} years</td>
-                            <td>
-                                <button onclick="viewInmate('${inmate._id}')">View</button>
-                                <button onclick="deleteInmate('${inmate._id}')">Delete</button>
-                            </td>
-                        </tr>
-                    `;
-                    tableBody.insertAdjacentHTML('beforeend', row);
-                });
+                const response = await fetch(apiUrl); // Fetch data from the backend
+                if (!response.ok) throw new Error('Failed to fetch');
+                const inmates = await response.json(); // Parse the JSON response
+                populateTable(inmates); // Populate the table with data
             } catch (error) {
                 console.error('Error fetching inmates:', error);
             }
-            }
+        }
 
-        // Call fetchInmates to populate the table on page load
+        function populateTable(inmates) {
+            const tableBody = document.getElementById('inmateTableBody');
+            tableBody.innerHTML = ''; // Clear existing table rows
+
+            inmates.forEach(inmate => {
+                const row = `<tr>
+                    <td>${inmate._id}</td>
+                    <td>${inmate.name}</td>
+                    <td>${inmate.crime}</td>
+                    <td>${inmate.sentenceDuration}</td>
+                    <td>${new Date(inmate.arrestDate).toLocaleDateString()}</td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+        }
+            fetchInmates(); // Call the function when the page loads
+        function searchInmates() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#inmateTableBody tr');
+
+            rows.forEach(row => {
+                const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                row.style.display = name.includes(searchInput) ? '' : 'none';
+            });
+        }
+            */
+        
+        async function fetchInmates() {
+            try {
+                const response = await fetch('http://localhost:3000/Inmate'); // Case-sensitive match
+                const inmates = await response.json();
+                console.log(inmates); // Populate your table with this data
+            } catch (error) {
+                console.error('Error fetching inmates:', error);
+            }
+        }
+
         fetchInmates();
 
-        async function addInmate(event) {
-            event.preventDefault(); // Prevent form submission from reloading the page
+        function searchInmates() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#inmateTableBody tr');
 
-            const name = document.getElementById('name').value;
-            const crime = document.getElementById('crime').value;
-            const sentenceDuration = document.getElementById('sentenceDuration').value;
-            const arrestDate = document.getElementById('arrestDate').value;
-
-            const inmateData = { name, crime, sentenceDuration, arrestDate };
-
-            try {
-                const response = await fetch('http://localhost:5000/inmate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(inmateData),
-                });
-                const newInmate = await response.json();
-                console.log('Inmate added:', newInmate);
-                fetchInmates(); // Refresh the table
-            } catch (error) {
-                console.error('Error adding inmate:', error);
-            }
+            rows.forEach(row => {
+                const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                row.style.display = name.includes(searchInput) ? '' : 'none';
+            });
         }
-
-        async function deleteInmate(id) {
-            try {
-                const response = await fetch(`http://localhost:5000/inmate/${id}`, { method: 'DELETE' });
-                const result = await response.json();
-                console.log(result.message);
-                fetchInmates(); // Refresh the table
-            } catch (error) {
-                console.error('Error deleting inmate:', error);
-            }
-        }
-
-        async function viewInmate(id) {
-            try {
-                const response = await fetch(`http://localhost:5000/inmates/${id}`);
-                const inmate = await response.json();
-
-                // Navigate to the bio page and pass inmate details
-                localStorage.setItem('selectedInmate', JSON.stringify(inmate));
-                window.location.href = 'inmate_bio.html';
-            } catch (error) {
-                console.error('Error fetching inmate:', error);
-            }
-        }
-
     </script>
 </head>
 <body>
@@ -176,7 +160,7 @@
     </ul>
     <div class="search-bar">
         <input type="text" placeholder="Search inmates..." id="searchInput" />
-        <button onclick="searchInmates()">Search</button>
+        <button onclick="fetchInmates();">Search</button>
     </div>
     
     <table>

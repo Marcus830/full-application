@@ -1,55 +1,42 @@
 // Import necessary packages
-const express = require('express'); /*A lightweight framework for building web servers in Node.js. It helps handle routes, requests, and responses easily.*/
-const mongoose = require('mongoose'); /* A library that allows interaction with MongoDB databases using JavaScript. It provides schemas and models for structured data.*/
-const bodyParser = require('body-parser'); /*Middleware to parse incoming JSON data in HTTP requests. It converts request bodies into usable JavaScript objects. */
-const cors = require('cors'); /* Middleware that allows your server to accept requests from other origins  */
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
-// Initialize the app
-const app = express(); /*Creates an instance of an Express application. This is your main server object where you define routes and middleware. */
+const app = express();
 
-const corsOptions = {
-  origin: "http://127.0.0.1:3000",
-};
-
-app.use(cors(corsOptions));
-
-// Middleware setup
-/* */
-app.use(bodyParser.json()); /* Ensures the server can process incoming JSON data from requests.*/
-app.use(cors()); /*  Allows cross-origin requests, which are necessary when your frontend and backend run on different domains or ports.*/
+// Middleware
+app.use(bodyParser.json());
+app.use(cors());
 
 // MongoDB Connection
-/*Establishes a connection to your MongoDB database.*/
-const uri = 'mongodb+srv://marcusmichealdb:dNCPOMwSIaJakqhU@cluster.mongodb.net/jailManagement?retryWrites=true&w=majority'; 
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }) /* Options to use MongoDB's newer connection engine, improving performance and stability.*/
-    .then(() => console.log('MongoDB connected')) /*Executes the success callback when the connection is successful. */
-    .catch(err => console.log('Database connection error:', err)); /* Handles errors during the connection*/
+//const uri = 'mongodb+srv://marcusmichealdb:dNCPOMwSIaJakqhU@cluster0.fscli.mongodb.net/?retryWrites=true&w=majority'; // Replace with your MongoDB URI
+mongoose.connect("mongodb://localhost:27017/Inmate")
+    .then(() => console.log('MongoDB connected'))
+    .catch(err => console.log(err));
 
-// Define the schema and model
+// Schema and Model
 const inmateSchema = new mongoose.Schema({
-    /* Properties of your data, Each field has rules, like required: true, which ensures the field must be present.*/
-    name: { type: String, required: true },
-    crime: { type: String, required: true },
-    sentenceDuration: { type: Number, required: true },
-    arrestDate: { type: Date, required: true },
+    name: String,
 });
-
 const Inmate = mongoose.model('Inmate', inmateSchema);
 
 // Routes
-// Get all inmates
-
-app.get('/inmate', async (req, res) => {       /*Defines a route for GET requests to /inmates.*/
+app.get('/Inmate', async (req, res) => {
     try {
-        const inmates = await Inmate.find();  /*Fetches all records from the Inmate collection. */
-        res.json(inmates);   /*Sends the fetched records back to the client as JSON.*/
+        console.log('Fetching inmates...');
+        const inmates = await Inmate.find();
+        console.log('Inmates:', inmates);
+        res.json(inmates);
     } catch (err) {
+        console.error('Error fetching inmates:', err.message);
         res.status(500).json({ error: err.message });
     }
 });
 
-// Add a new inmate
-app.post('/inmate', async (req, res) => {
+
+app.post('/inmates', async (req, res) => {
     try {
         const newInmate = new Inmate(req.body);
         await newInmate.save();
@@ -59,29 +46,10 @@ app.post('/inmate', async (req, res) => {
     }
 });
 
-// Update an inmate
-app.put('/inmate/:id', async (req, res) => {
-    try {
-        const updatedInmate = await Inmate.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        res.json(updatedInmate);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// Delete an inmate
-app.delete('/inmate/:id', async (req, res) => {
-    try {
-        await Inmate.findByIdAndDelete(req.params.id);
-        res.json({ message: 'Inmate deleted successfully' });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
 // Start the server
-const PORT = 3000; /* Starts the server and listens for requests on the specified port. */
+const PORT = 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
 
 
 
