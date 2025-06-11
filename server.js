@@ -1,54 +1,45 @@
-// Import necessary packages
 const express = require('express');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-
 const app = express();
+const db = require('./db'); // Import the DB connection
 
-// Middleware
-app.use(bodyParser.json());
-app.use(cors());
+app.use(express.json());
 
-// MongoDB Connection
-//const uri = 'mongodb+srv://marcusmichealdb:dNCPOMwSIaJakqhU@cluster0.fscli.mongodb.net/?retryWrites=true&w=majority'; // Replace with your MongoDB URI
-mongoose.connect("mongodb://localhost:27017/Inmate")
-    .then(() => console.log('MongoDB connected'))
-    .catch(err => console.log(err));
+const cors = require('cors');
+app.use(cors({
+  origin: ['http://localhost:3000', 'null']
+})); // This allows all origins — for dev use only
 
-// Schema and Model
-const inmateSchema = new mongoose.Schema({
-    name: String,
-});
-const Inmate = mongoose.model('Inmate', inmateSchema);
-
-// Routes
-app.get('/Inmate', async (req, res) => {
-    try {
-        console.log('Fetching inmates...');
-        const inmates = await Inmate.find();
-        console.log('Inmates:', inmates);
-        res.json(inmates);
-    } catch (err) {
-        console.error('Error fetching inmates:', err.message);
-        res.status(500).json({ error: err.message });
+// Add this GET route to fetch all inmates
+app.get('/inmates', (req, res) => {
+  const sql = 'SELECT * FROM inmates';
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error('Select error:', err);
+      return res.status(500).json({ error: 'Database query failed: ' + err.message });
     }
+    res.json(results);
+  });
 });
 
-
-app.post('/inmates', async (req, res) => {
-    try {
-        const newInmate = new Inmate(req.body);
-        await newInmate.save();
-        res.json(newInmate);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+// Insert new inmate
+app.post('/inmates', (req, res) => {
+  const {ID, name, crime, sentenceDuration, arrestDate } = req.body; 
+  
+  const sql = 'INSERT INTO inmates (name, crime, sentenceDuration, arrestDate) VALUES (?, ?, ?, ?)';
+  db.query(sql, [ID, name, crime, sentenceDuration, arrestDate], (err, result) => {
+    if (err) {
+      console.error('Insert error:', err);
+      return res.status(500).json({ error: 'Database insert failed' });
     }
+    res.json({ message: 'User added successfully', userId: result.insertId });
+  });
 });
 
-// Start the server
-const PORT = 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Start server
+app.listen(3000, () => {
+  console.log('Server running on http://localhost:3000');
+});
+
 
 
 

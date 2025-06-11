@@ -12,7 +12,7 @@
             padding: 0;
             width: 15%;
             background-color: #ada1a1;
-            height: 100vh; /* Full viewport height */
+            height: 100vh;
             position: fixed;
             overflow: auto;
         }
@@ -30,120 +30,66 @@
             background-color: #888;
             color: white;
         }
-        table{
+
+        .main-content {
             margin-left: 18%;
             padding: 20px;
+        }
+
+        .form-container, .search-bar {
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
+            margin-bottom: 20px;
         }
-        .search-bar{
-            margin-left: 18%;
-            padding: 20px;
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        #searchInput{
-            width: 75%; /* Full-width */
-            padding: 12px 20px 12px 40px; /* Add some padding */
-            border: 1px solid #0e0d0d; /* Add a black border */
-            background-position: 10px 12px; /* Position the search icon */
-            background-image: url('/css/searchicon.png'); /* Add a search icon to input */
+
+        #searchInput {
+            width: 75%;
+            padding: 12px 20px 12px 40px;
+            border: 1px solid #0e0d0d;
             border-radius: 2%;
         }
-        table{
-            width: 75%; /* Full-width */
-            border: 2px solid #ddd; /* Add a grey border */
-            font-size: 18px; /* Increase font-size */
+
+        table {
+            width: 75%;
+            border: 2px solid #ddd;
+            font-size: 18px;
+            border-collapse: collapse;
         }
+
         th, td {
-            text-align: left; /* Left-align text */
-            padding: 12px; /* Add padding */
-        }
-        tr {
-            /* Add a bottom border to all table rows */
+            text-align: left;
+            padding: 12px;
             border-bottom: 1px solid #ddd;
         }
+
         tr.header, tr:hover {
-            /* Add a grey background color to the table header and on hover */
             background-color: #f1f1f1;
         }
+
+        .form-container input, .form-container button {
+            padding: 8px;
+            margin: 5px;
+        }
+
+        .error-message {
+            color: red;
+            margin: 10px 0;
+        }
+
+        .success-message {
+            color: green;
+            margin: 10px 0;
+        }
+
+        #addInmateForm {
+            display: none;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
     </style>
-    <script>
-         function navigateTo(page) {
-            // Replace these links with actual pages in your system
-            const pages = {
-                home: "Homepage.html",
-                staff: "staff_management.html",
-                incidents: "incident_reporting.html"
-            };
-            window.location.assign(pages[page]);
-        }
-
-        /*
-        const apiUrl = 'http://localhost:27016/inmate';
-
-        async function fetchInmates() {
-            try {
-                const response = await fetch(apiUrl); // Fetch data from the backend
-                if (!response.ok) throw new Error('Failed to fetch');
-                const inmates = await response.json(); // Parse the JSON response
-                populateTable(inmates); // Populate the table with data
-            } catch (error) {
-                console.error('Error fetching inmates:', error);
-            }
-        }
-
-        function populateTable(inmates) {
-            const tableBody = document.getElementById('inmateTableBody');
-            tableBody.innerHTML = ''; // Clear existing table rows
-
-            inmates.forEach(inmate => {
-                const row = `<tr>
-                    <td>${inmate._id}</td>
-                    <td>${inmate.name}</td>
-                    <td>${inmate.crime}</td>
-                    <td>${inmate.sentenceDuration}</td>
-                    <td>${new Date(inmate.arrestDate).toLocaleDateString()}</td>
-                </tr>`;
-                tableBody.innerHTML += row;
-            });
-        }
-            fetchInmates(); // Call the function when the page loads
-        function searchInmates() {
-            const searchInput = document.getElementById('searchInput').value.toLowerCase();
-            const rows = document.querySelectorAll('#inmateTableBody tr');
-
-            rows.forEach(row => {
-                const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-                row.style.display = name.includes(searchInput) ? '' : 'none';
-            });
-        }
-            */
-        
-        async function fetchInmates() {
-            try {
-                const response = await fetch('http://localhost:3000/Inmate'); // Case-sensitive match
-                const inmates = await response.json();
-                console.log(inmates); // Populate your table with this data
-            } catch (error) {
-                console.error('Error fetching inmates:', error);
-            }
-        }
-
-        fetchInmates();
-
-        function searchInmates() {
-            const searchInput = document.getElementById('searchInput').value.toLowerCase();
-            const rows = document.querySelectorAll('#inmateTableBody tr');
-
-            rows.forEach(row => {
-                const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-                row.style.display = name.includes(searchInput) ? '' : 'none';
-            });
-        }
-    </script>
 </head>
 <body>
     <header style="background-color: #333; color: white; padding: 10px; text-align: center;">
@@ -158,36 +104,200 @@
         <li><a href="#">Contact</a></li>
         <li><a href="#">About</a></li>
     </ul>
-    <div class="search-bar">
-        <input type="text" placeholder="Search inmates..." id="searchInput" />
-        <button onclick="fetchInmates();">Search</button>
-    </div>
     
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Crime</th>
-                <th>Sentence Duration</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody id="inmateTableBody">
-            <!-- Rows dynamically populated via JavaScript -->
-        </tbody>
-    </table>
-    
-    <button onclick="openAddInmateForm()">Add New Inmate</button>
-    
-    <form id="addInmateForm" onsubmit="addInmate(event)">
-        <input type="text" id="name" placeholder="Name" required />
-        <input type="text" id="crime" placeholder="Crime" required />
-        <input type="number" id="sentenceDuration" placeholder="Sentence Duration (years)" required />
-        <input type="date" id="arrestDate" required />
-        <button type="submit">Add Inmate</button>
-    </form>
-    
+    <div class="main-content">
+        <button onclick="openAddInmateForm()">Add New Inmate</button>
+        
+        <!-- Add Inmate Form -->
+        <form id="addInmateForm">
+            <h3>Add New Inmate</h3>
+            <input type="text" name="name" placeholder="Name" required />
+            <input type="text" name="crime" placeholder="Crime" required />
+            <input type="number" name="sentenceDuration" placeholder="Sentence Duration (years)" required />
+            <input type="date" name="arrestDate" required />
+            <button type="submit">Add Inmate</button>
+            <button type="button" onclick="closeAddInmateForm()">Cancel</button>
+        </form>
 
+        <div id="message"></div>
+
+        <!-- Search Section -->
+        <div class="search-bar">
+            <input type="text" placeholder="Search inmates..." id="searchInput" />
+            <button onclick="searchDatabase()">Search</button>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Crime</th>
+                    <th>Sentence Duration</th>
+                    <th>Arrest Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="inmateTableBody">
+                <tr>
+                    <td colspan="6" style="text-align: center; color: #666;">No inmates found. Use search or add new inmates.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            loadAllInmates(); // Load initial data
+        });
+
+        function setupEventListeners() {
+            // Form submission handler
+            document.getElementById('addInmateForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+
+                const data = {
+                    name: formData.get('name'),
+                    crime: formData.get('crime'),
+                    sentenceDuration: formData.get('sentenceDuration'),
+                    arrestDate: formData.get('arrestDate') // Fixed: was arrestdate in server
+                };
+
+                try {
+                    const response = await fetch('http://localhost:3000/inmates', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        showMessage('Inmate added successfully!', 'success');
+                        this.reset(); // Clear form
+                        closeAddInmateForm();
+                        loadAllInmates(); // Refresh the table
+                    } else {
+                        showMessage('Error: ' + result.error, 'error');
+                    }
+                } catch (error) {
+                    showMessage('Network error: ' + error.message, 'error');
+                }
+            });
+        }
+
+        async function searchDatabase() {
+            const query = document.getElementById('searchInput').value.trim();
+            
+            if (!query) {
+                loadAllInmates(); // If empty search, load all
+                return;
+            }
+
+            try {
+                // Fixed: Use correct endpoint '/search' instead of '/inmates'
+                const response = await fetch('http://localhost:3000/inmates', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ query })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const results = await response.json();
+                displayResults(results);
+                
+            } catch (error) {
+                console.error('Search error:', error);
+                showMessage('Search failed: ' + error.message, 'error');
+            }
+        }
+
+        async function loadAllInmates() {
+            try {
+                const response = await fetch('http://localhost:3000/inmates', {
+                    method: 'GET'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const inmates = await response.json();
+                displayResults(inmates);
+                
+            } catch (error) {
+                console.error('Load error:', error);
+                showMessage('Failed to load inmates: ' + error.message, 'error');
+            }
+        }
+
+        function displayResults(results) {
+            const tableBody = document.getElementById('inmateTableBody');
+            
+            if (!results || results.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #666;">No inmates found.</td></tr>';
+                return;
+            }
+
+            tableBody.innerHTML = results.map(inmate => `
+                <tr>
+                    <td>${inmate.id || 'N/A'}</td>
+                    <td>${inmate.name || 'N/A'}</td>
+                    <td>${inmate.crime || 'N/A'}</td>
+                    <td>${inmate.sentenceDuration || 'N/A'} years</td>
+                    <td>${inmate.arrestDate ? new Date(inmate.arrestDate).toLocaleDateString() : 'N/A'}</td>
+                    <td>
+                        <button onclick="editInmate(${inmate.id})">Edit</button>
+                        <button onclick="deleteInmate(${inmate.id})">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openAddInmateForm() {
+            document.getElementById('addInmateForm').style.display = 'block';
+        }
+
+        function closeAddInmateForm() {
+            document.getElementById('addInmateForm').style.display = 'none';
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = `<div class="${type}-message">${message}</div>`;
+            
+            // Clear message after 5 seconds
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 5000);
+        }
+
+        function editInmate(id) {
+            // Placeholder for edit functionality
+            alert('Edit functionality not implemented yet for inmate ID: ' + id);
+        }
+
+        function deleteInmate(id) {
+            if (confirm('Are you sure you want to delete this inmate?')) {
+                // Placeholder for delete functionality
+                alert('Delete functionality not implemented yet for inmate ID: ' + id);
+            }
+        }
+
+        // Allow Enter key to trigger search
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && document.activeElement.id === 'searchInput') {
+                searchDatabase();
+            }
+        });
+    </script>
 </body>
 </html>

@@ -94,11 +94,18 @@
             // Replace these links with actual pages in your system
             const pages = {
                 inmate: "inmate_management.html",
-                staff: "staff_management.html",
-                incidents: "incident_reporting.html"
+                staff: "staff_management.html", //I need to do this webpage
+                incidents: "incident_reporting.html" //I need to do this webpage as well
             };
             window.location.assign(pages[page]);
         }
+        fetch('http://localhost:3000/users')
+        .then(response => response.json())
+        .then(data => {
+        console.log('Users:', data);
+        // You can now display this data on your page
+        })
+        .catch(error => console.error('Error:', error));
     </script>
 </head>
 <body>

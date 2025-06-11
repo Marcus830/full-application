@@ -48,15 +48,7 @@
 
     <div id="bioContainer"></div>
 <script>
-    const inmate = JSON.parse(localStorage.getItem('selectedInmate'));
-
-    const bioContainer = document.getElementById('bioContainer');
-    bioContainer.innerHTML = `
-        <h2>${inmate.name}</h2>
-        <p><strong>Crime:</strong> ${inmate.crime}</p>
-        <p><strong>Sentence:</strong> ${inmate.sentenceDuration} years</p>
-        <p><strong>Arrest Date:</strong> ${new Date(inmate.arrestDate).toLocaleDateString()}</p>
-    `;
+    
 </script>
 
     
