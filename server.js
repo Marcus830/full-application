@@ -11,7 +11,7 @@ app.use(cors({
 
 // Add this GET route to fetch all inmates
 app.get('/inmates', (req, res) => {
-  const sql = 'SELECT * FROM inmates';
+  const sql = 'SELECT * FROM jail.inmates';
   db.query(sql, (err, results) => {
     if (err) {
       console.error('Select error:', err);

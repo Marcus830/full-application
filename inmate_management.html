@@ -249,9 +249,9 @@
 
             tableBody.innerHTML = results.map(inmate => `
                 <tr>
-                    <td>${inmate.id || 'N/A'}</td>
-                    <td>${inmate.name || 'N/A'}</td>
-                    <td>${inmate.crime || 'N/A'}</td>
+                    <td>${inmate.ID || 'N/A'}</td>
+                    <td>${inmate.Name || 'N/A'}</td>
+                    <td>${inmate.Crime || 'N/A'}</td>
                     <td>${inmate.sentenceDuration || 'N/A'} years</td>
                     <td>${inmate.arrestDate ? new Date(inmate.arrestDate).toLocaleDateString() : 'N/A'}</td>
                     <td>
