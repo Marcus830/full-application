@@ -14,14 +14,6 @@ connection.connect(err => {
     return;
   }
   console.log('Connected to MySQL database.');
-
-  connection.query("SELECT * FROM jail.inmates", (err, results, fields) => {
-    if (err) {
-      console.error("Query error: ", err);
-      return;
-    }
-    console.log("Query results:", results);
-  });
 });
 
 

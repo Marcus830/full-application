@@ -35,6 +35,63 @@ app.post('/inmates', (req, res) => {
   });
 });
 
+// Get all staff
+app.get('/staff', async (req, res) => {
+    const sql = 'SELECT * FROM staff';
+    db.query(sql, (err, rows) => {
+      if (err) {
+        console.error('Select error:', err);
+        return res.status(500).json({ error: 'database query failed: ' + err.message });
+      }
+      res.json(rows);
+    });
+});
+
+// Get single staff by ID
+app.get('/staff/:id', async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT * FROM staff WHERE id = ?', [req.params.id]);
+    res.json(rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Add new staff
+app.post('/staff', async (req, res) => {
+  const { name, role, department, phone } = req.body;
+  try {
+    await db.query('INSERT INTO staff (name, role, department, phone) VALUES (?, ?, ?, ?)', 
+      [name, role, department, phone]);
+    res.sendStatus(201);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Update staff
+app.put('/staff/:id', async (req, res) => {
+  const { name, role, department, phone } = req.body;
+  try {
+    await db.query(
+      'UPDATE staff SET name = ?, role = ?, department = ?, phone = ? WHERE id = ?',
+      [name, role, department, phone, req.params.id]
+    );
+    res.sendStatus(200);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete staff
+app.delete('/staff/:id', async (req, res) => {
+  try {
+    await db.query('DELETE FROM staff WHERE id = ?', [req.params.id]);
+    res.sendStatus(204);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 // Start server
 app.listen(3000, () => {
   console.log('Server running on http://localhost:3000');

@@ -88,6 +88,24 @@
             font-weight: bold;
             color: #555;
         }
+        .activity-container {
+            margin-left: 18%;
+            padding: 20px;
+            max-width: 60%;
+        }
+        .activity-container h2 {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .activity-card {
+            background: #dbd8c5;
+            border-left: 5px solid #ffb300;
+            padding: 12px 18px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
     </style>
     <script>
         function navigateTo(page) {
@@ -113,13 +131,13 @@
         <h1>Jail Management System</h1>
         <p>Manage inmates, staff, and incidents efficiently</p>
     </header>
-    
+  
     <!-- Sidebar Navigation -->
     <ul>
         <li><a href="#">Home</a></li>
         <li><a href="#">Calendar</a></li>
-        <li><a href="#">Contact</a></li>
-        <li><a href="#">About</a></li>
+        <li><a href="#">Notifications</a></li>
+        <li><a href="#">Logout</a></li>
     </ul>
 
     <!-- Quick Stats Section -->
@@ -137,7 +155,19 @@
             <p>15</p>
         </div>
     </div>
-
+    <!-- Recent Activity Section -->
+    <div class="activity-container">
+        <h2>Recent Activity</h2>
+        <div class="activity-card">
+            <strong>New Inmate Admitted:</strong> John Doe (ID: 12345) – 10:30 AM, June 29
+        </div>
+        <div class="activity-card">
+            <strong>Incident Reported:</strong> Cell Block B – 9:15 AM, June 29
+        </div>
+        <div class="activity-card">
+            <strong>Staff Shift Change:</strong> Officer Smith – 8:00 AM, June 29
+        </div>
+    </div>
     <!-- Button Section -->
     <div class="button-container">
         <button onclick="navigateTo('inmate')">Inmate Record Management</button>
