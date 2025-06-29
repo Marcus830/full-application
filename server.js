@@ -47,7 +47,8 @@ app.get('/staff', async (req, res) => {
     });
 });
 
-// Get single staff by ID
+// Get staff by ID
+// This route fetches a specific staff member by ID
 app.get('/staff/:id', async (req, res) => {
   try {
     const [rows] = await db.query('SELECT * FROM staff WHERE id = ?', [req.params.id]);

@@ -82,7 +82,6 @@
             });
         }
 
-
         function openAddModal() {
         document.getElementById("modalTitle").textContent = "Add Staff";
         document.getElementById("staffForm").reset();
@@ -115,12 +114,35 @@
         }
 
         window.onload = function () {
+            loadStaff(); // load data when page is ready
             document.getElementById("staffForm").addEventListener("submit", function (e) {
                 e.preventDefault();
-                // your form logic here...
-            });
+                const id = document.getElementById("staffId").value;
+                const name = document.getElementById("name").value;
+                const role = document.getElementById("role").value;
+                const department = document.getElementById("department").value;
+                const phone = document.getElementById("phone").value;
 
-            loadStaff(); // load data when page is ready
+                if (id) {
+                    // Update existing staff
+                    fetch(`http://localhost:3000/staff/${id}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ name, role, department, phone }),
+                    }).then(loadStaff);
+                } else {
+                    // Add new staff
+                    fetch("http://localhost:3000/staff", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ name, role, department, phone }),
+                    }).then(loadStaff);
+                }
+            });
         };
 
     </script>
