@@ -8,13 +8,50 @@
   <style>
     body {
         font-family: Arial, sans-serif;
-        padding: 20px;
+    }
+    /* Sidebar styling */
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            width: 15%;
+            background-color: #ada1a1;
+            height: 100vh; /* Full viewport height */
+            position: fixed;
+            overflow: auto;
+        }
+
+        ul li a {
+            display: block;
+            color: #000;
+            text-align: center;
+            padding: 12px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        ul li a:hover {
+            background-color: #888;
+            color: white;
+        }
+    h2{
+        text-align: center;
+        margin-bottom: 20px;
     }
 
     .top-bar {
         display: flex;
         justify-content: space-between;
         margin-bottom: 20px;
+    }
+    #addStaffBtn{
+        background-color: #cc0000;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 8px;
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
     }
 
     #staffTable {
@@ -25,7 +62,14 @@
     #staffTable th, #staffTable td {
         border: 1px solid #ccc;
         padding: 10px;
-        text-align: left;
+        text-align: center;
+    }
+    #staffTable th {
+        background-color: #cc0000;
+        color: white;
+    }
+    #staffTable tr:hover{
+        background-color: lightgrey;
     }
 
     .modal {
@@ -48,7 +92,31 @@
         display: none;
     }
     </style>
+    <style>
+    .main-content {
+      margin-left: 17%; /* slightly more than sidebar width for spacing */
+      margin-top: 30px; /* adjust as needed to sit below header */
+    }
+    </style>
     <script>
+      myFunction = function() {
+        const input = document.getElementById("searchInput");
+        const filter = input.value.toLowerCase();
+        const table = document.getElementById("staffTable");
+        const tr = table.getElementsByTagName("tr");
+        for (let i = 1; i < tr.length; i++) {
+            const td = tr[i].getElementsByTagName("td")[0]; // Search in the first column (Name)
+            if (td) {
+                const txtValue = td.textContent || td.innerText;
+                if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+      };
+      // Function to load staff data from the server
         async function loadStaff() {
         try{
             const response = await fetch("http://localhost:3000/staff", {
@@ -148,27 +216,40 @@
     </script>
 </head>
 <body>
-  <h1>Staff Management</h1>
+  <header style="background-color: #333; color: white; padding: 10px; text-align: center;">
+        <h1>Jail Management System</h1>
+        <h2>Staff Management</h2>
+  </header>
 
-  <div class="top-bar">
-    <input type="text" id="searchInput" placeholder="Search staff..." />
-    <button onclick="openAddModal()">Add Staff</button>
+  <!-- Sidebar Navigation -->
+  <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Calendar</a></li>
+      <li><a href="#">Notifications</a></li>
+      <li><a href="#">Logout</a></li>
+  </ul>
+
+  <div class="main-content">
+    <div class="top-bar">
+      <input type="text" id="searchInput" onkeyup="myFunction()" placeholder="Search staff..." />
+      <button id="addStaffBtn" onclick="openAddModal()">Add Staff</button>
+    </div>
+
+    <table id="staffTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Role</th>
+          <th>Department</th>
+          <th>Phone</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Staff rows will go here -->
+      </tbody>
+    </table>
   </div>
-
-  <table id="staffTable">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Role</th>
-        <th>Department</th>
-        <th>Phone</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Staff rows will go here -->
-    </tbody>
-  </table>
 
   <!-- Add/Edit Modal -->
   <div id="modal" class="modal hidden">
