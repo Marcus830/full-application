@@ -21,6 +21,24 @@ app.get('/inmates', (req, res) => {
   });
 });
 
+// Add this GET route to fetch inmate by ID
+// This route fetches a specific inmate by ID
+app.get('/inmates/:id', (req, res) => {
+  const id = req.params.id;
+
+  db.query('SELECT * FROM jail.inmates WHERE id = ?', [id], (err, results) => {
+    if (err) {
+      console.error('Error fetching inmate by ID:', err);
+      res.status(500).json({ error: 'Database error' });
+    } else if (results.length === 0) {
+      res.status(404).json({ error: 'Inmate not found' });
+    } else {
+      res.json(results[0]); // Return the single record
+    }
+  });
+});
+
+
 // Insert new inmate
 app.post('/inmates', (req, res) => {
   const {ID, name, crime, sentenceDuration, arrestDate } = req.body; 
@@ -32,6 +50,33 @@ app.post('/inmates', (req, res) => {
       return res.status(500).json({ error: 'Database insert failed' });
     }
     res.json({ message: 'User added successfully', userId: result.insertId });
+  });
+});
+// Update inmate
+app.put('/inmates/:id', (req, res) => {
+  const id = req.params.id;
+  const { name, crime, sentenceDuration, arrestDate } = req.body;
+
+  const sql = 'UPDATE inmates SET name = ?, crime = ?, sentenceDuration = ?, arrestDate = ? WHERE id = ?';
+  db.query(sql, [name, crime, sentenceDuration, arrestDate, id], (err, result) => {
+    if (err) {
+      console.error('Update error:', err);
+      return res.status(500).json({ error: 'Database update failed' });
+    }
+    res.json({ message: 'Inmate updated successfully' });
+  });
+});
+
+// Delete inmate
+app.delete('/inmates/:id', (req, res) => {
+  const id = req.params.id;
+
+  db.query('DELETE FROM inmates WHERE id = ?', [id], (err, result) => {
+    if (err) {
+      console.error('Delete error:', err);
+      return res.status(500).json({ error: 'Database delete failed' });
+    }
+    res.json({ message: 'Inmate deleted successfully' });
   });
 });
 

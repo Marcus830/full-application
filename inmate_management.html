@@ -250,7 +250,7 @@
             tableBody.innerHTML = results.map(inmate => `
                 <tr>
                     <td>${inmate.ID || 'N/A'}</td>
-                    <td>${inmate.Name || 'N/A'}</td>
+                    <td><a href="inmate_bio.html?id=${inmate.ID}">${inmate.Name || 'N/A'}</a></td>
                     <td>${inmate.Crime || 'N/A'}</td>
                     <td>${inmate.sentenceDuration || 'N/A'} years</td>
                     <td>${inmate.arrestDate ? new Date(inmate.arrestDate).toLocaleDateString() : 'N/A'}</td>

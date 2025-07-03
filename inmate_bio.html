@@ -30,7 +30,93 @@
             background-color: #888;
             color: white;
         }
+        #record-container {
+            margin-left: 15%;
+            padding: 20px;
+            background-color: #c5c5c5;
+            border-radius: 8px;
+        }
+        #record-container img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+        #bioContainer p {
+            font-size: 18px;
+            line-height: 1.5;
+        }
+        .left-section {
+            flex: 1;
+        }
+        .right-section {
+            flex: 1;
+        }
+        .photo-section {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        .info-table td {
+            padding: 2px 5px;
+            vertical-align: top;
+            font-size: 9px;
+        }
+        .info-table .label {
+            font-weight: bold;
+            width: 25%;
+        }
+        .info-table .value {
+            border-bottom: 1px solid #999;
+            width: 25%;
+        }
     </style>
+    <script>
+        /*
+        function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+        }
+        
+        window.onload = function fetchRecord() {
+        const id = getQueryParam('id');
+        if (!id) {
+            document.getElementById('record-container').textContent = 'No inmate ID provided.';
+            return;
+        }
+        fetch(`http://localhost:3000/inmates/${id}`)
+            .then(res => {
+            if (!res.ok) {
+                throw new Error('Record not found');
+            }
+            return res.json();
+            })
+            .then(data => {
+            const element1 = document.getElementById('name-container');
+            element1.innerHTML = `${data.name} `;
+            const element2 = document.getElementById('age-container');
+            element2.innerHTML = `${data.age} `;
+            const element3 = document.getElementById('crime-container');
+            element3.innerHTML = `${data.crime} `;
+            const element4 = document.getElementById('sentence-container');
+            element4.innerHTML = `${data.sentence} `;
+            const element5 = document.getElementById('status-container');
+            element5.innerHTML = `${data.status}`;
+            })
+            .catch(error => {
+            document.getElementById('record-container').textContent = error.message;
+            });
+        }
+        */
+  </script>
+
+        
 </head>
 <body>
     <header style="background-color: #333; color: white; padding: 10px; text-align: center;">
@@ -46,11 +132,93 @@
         <li><a href="#">About</a></li>
     </ul>
 
-    <div id="bioContainer"></div>
-<script>
-    
-</script>
+    <div id="record-container">
+        <div class="left-section">
+                <div class="photo-section">
+                    <div class="main-photo"> <img src="2c47d5dd5b532f83bb55c4cd6f5bd1ef.jpg" alt="Inmate Photo"></div>
+                </div>
 
-    
-</body>
+                <table class="info-table">
+                    <tr>
+                        <td class="label">FULL NAME:</td>
+                        <td class="name-container"></td>
+                        <td class="label">DATE OF BIRTH:</td>
+                        <td class="value">01/15/1985</td>
+                    </tr>
+                    <tr>
+                        <td class="label">NICKNAME:</td>
+                        <td class="value">MIKE</td>
+                        <td class="label">PLACE OF BIRTH:</td>
+                        <td class="value">NEW YORK, NY</td>
+                    </tr>
+                    <tr>
+                        <td class="label">GENDER:</td>
+                        <td class="value">MALE</td>
+                        <td class="label">NATIONALITY:</td>
+                        <td class="value">AMERICAN</td>
+                    </tr>
+                    <tr>
+                        <td class="label">HEIGHT:</td>
+                        <td class="value">5'10"</td>
+                        <td class="label">WEIGHT:</td>
+                        <td class="value">175 LBS</td>
+                    </tr>
+                    <tr>
+                        <td class="label">EYE COLOR:</td>
+                        <td class="value">BROWN</td>
+                        <td class="label">HAIR COLOR:</td>
+                        <td class="value">BLACK</td>
+                    </tr>
+                    <tr>
+                        <td class="label">DISTINGUISHING MARKS:</td>
+                        <td class="value" colspan="3">SCAR ON LEFT FOREARM</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="right-section">
+                <div class="section-title">PERSONAL INFORMATION</div>
+                <table class="info-table">
+                    <tr>
+                        <td class="label">ADDRESS:</td>
+                        <td class="value" colspan="3">123 MAIN STREET, APT 4B</td>
+                    </tr>
+                    <tr>
+                        <td class="label">CITY:</td>
+                        <td class="value">NEW YORK</td>
+                        <td class="label">STATE:</td>
+                        <td class="value">NY</td>
+                    </tr>
+                    <tr>
+                        <td class="label">ZIP CODE:</td>
+                        <td class="value">10001</td>
+                        <td class="label">PHONE:</td>
+                        <td class="value">(555) 123-4567</td>
+                    </tr>
+                    <tr>
+                        <td class="label">EMAIL:</td>
+                        <td class="value" colspan="3">john.smith@email.com</td>
+                    </tr>
+                </table>
+
+                <div class="section-title">EMERGENCY CONTACT</div>
+                <table class="info-table">
+                    <tr>
+                        <td class="label">NAME:</td>
+                        <td class="value">JANE SMITH</td>
+                        <td class="label">RELATIONSHIP:</td>
+                        <td class="value">SPOUSE</td>
+                    </tr>
+                    <tr>
+                        <td class="label">PHONE:</td>
+                        <td class="value">(555) 987-6543</td>
+                        <td class="label">ALT PHONE:</td>
+                        <td class="value">(555) 456-7890</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    </body>
 </html>
