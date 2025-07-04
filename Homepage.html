@@ -13,7 +13,7 @@
             width: 15%;
             background-color: #ada1a1;
             height: 100vh; /* Full viewport height */
-            position: fixed;
+            position: absolute;
             overflow: auto;
         }
 
@@ -108,6 +108,20 @@
         }
     </style>
     <script>
+        //fetching data for imate count
+        fetch('http://localhost:3000/inmates/count')
+        .then(response => response.json())
+        .then(data => {
+            document.querySelector('.stats-card:nth-child(1) p').innerText = data.total;
+        });
+        
+        //fetching data for staff count
+        fetch('http://localhost:3000/staff/count')
+            .then(response => response.json())
+            .then(data => {
+                document.querySelector('.stats-card:nth-child(2) p').innerText = data.total;
+            });
+        // Function to navigate to different pages
         function navigateTo(page) {
             // Replace these links with actual pages in your system
             const pages = {
@@ -144,11 +158,11 @@
     <div class="stats-container">
         <div class="stats-card">
             <h3>Total Inmates</h3>
-            <p>120</p>
+            <p></p>
         </div>
         <div class="stats-card">
             <h3>Staff Members</h3>
-            <p>25</p>
+            <p></p>
         </div>
         <div class="stats-card">
             <h3>Upcoming Visits</h3>

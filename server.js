@@ -9,6 +9,30 @@ app.use(cors({
   origin: ['http://localhost:3000', 'null']
 })); // This allows all origins — for dev use only
 
+//number of imates 
+app.get('/inmates/count', (req, res) => {
+  const sql = 'SELECT COUNT(*) AS total FROM inmates';
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error('Count error:', err);
+      return res.status(500).json({ error: 'Database count failed' });
+    }
+    res.json({ total: results[0].total });
+  });
+});
+
+//number of staff
+app.get('/staff/count', (req, res) => {
+  const sql = 'SELECT COUNT(*) AS total FROM staff';
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error('Count error:', err);
+      return res.status(500).json({ error: 'Database count failed' });
+    }
+    res.json({ total: results[0].total });
+  });
+});
+
 // Add this GET route to fetch all inmates
 app.get('/inmates', (req, res) => {
   const sql = 'SELECT * FROM jail.inmates';
@@ -52,6 +76,7 @@ app.post('/inmates', (req, res) => {
     res.json({ message: 'User added successfully', userId: result.insertId });
   });
 });
+
 // Update inmate
 app.put('/inmates/:id', (req, res) => {
   const id = req.params.id;
