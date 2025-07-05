@@ -13,7 +13,7 @@
             width: 15%;
             background-color: #ada1a1;
             height: 100vh;
-            position: fixed;
+            position: absolute;
             overflow: auto;
         }
 
@@ -249,8 +249,8 @@
 
             tableBody.innerHTML = results.map(inmate => `
                 <tr>
-                    <td>${inmate.ID || 'N/A'}</td>
-                    <td><a href="inmate_bio.html?id=${inmate.ID}">${inmate.Name || 'N/A'}</a></td>
+                    <td>${inmate.id || 'N/A'}</td>
+                    <td><a href="inmate_bio.html?id=${inmate.id}">${inmate.Name || 'N/A'}</a></td>
                     <td>${inmate.Crime || 'N/A'}</td>
                     <td>${inmate.sentenceDuration || 'N/A'} years</td>
                     <td>${inmate.arrestDate ? new Date(inmate.arrestDate).toLocaleDateString() : 'N/A'}</td>
