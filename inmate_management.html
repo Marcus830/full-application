@@ -124,6 +124,18 @@
             <button type="button" onclick="closeAddInmateForm()">Cancel</button>
         </form>
 
+        <!-- Edit Inmate Form -->
+        <form id="editInmateForm" style="display: none;">
+            <h3>Edit Inmate</h3>
+            <input type="hidden" name="inmateId" id="inmateId" />
+            <input type="text" name="name" id="name" placeholder="Name" required />
+            <input type="text" name="crime" id="crime" placeholder="Crime" required />
+            <input type="number" name="sentenceDuration" id="sentenceDuration" placeholder="Sentence Duration (years)" required />
+            <input type="date" name="arrestDate" id="arrestDate" required />
+            <button type="submit">Update Inmate</button>
+            <button type="button" onclick="closeEditInmateForm()">Cancel</button>
+        </form>
+
         <div id="message"></div>
 
         <!-- Search Section -->
@@ -159,6 +171,7 @@
             loadAllInmates(); // Load initial data
         });
 
+        //adding a new inmate function COMPLETED
         function setupEventListeners() {
             // Form submission handler
             document.getElementById('addInmateForm').addEventListener('submit', async function (e) {
@@ -169,7 +182,7 @@
                     name: formData.get('name'),
                     crime: formData.get('crime'),
                     sentenceDuration: formData.get('sentenceDuration'),
-                    arrestDate: formData.get('arrestDate') // Fixed: was arrestdate in server
+                    arrestDate: formData.get('arrestDate') 
                 };
 
                 try {
@@ -193,8 +206,39 @@
                     showMessage('Network error: ' + error.message, 'error');
                 }
             });
+
+            // Attach the edit form submit handler ONCE
+            // This will handle the edit inmate form submission
+            document.getElementById('editInmateForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const id = document.getElementById('inmateId').value;
+                const data = {
+                    id: document.getElementById("inmateId").value,
+                    name: document.getElementById("name").value,
+                    crime: document.getElementById("crime").value,
+                    sentenceDuration: document.getElementById("sentenceDuration").value,
+                    arrestDate: document.getElementById("arrestDate").value
+                };
+                try {
+                    const response = await fetch(`http://localhost:3000/inmates/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const result = await response.json();
+                    showMessage('Inmate updated successfully!', 'success');
+                    closeEditInmateForm();
+                    loadAllInmates(); // Refresh the table
+                } catch (error) {
+                    showMessage('Update failed: ' + error.message, 'error');
+                }
+            });
         }
 
+        // Function to search the database COMPLETED
         async function searchDatabase() {
             const query = document.getElementById('searchInput').value.trim();
             
@@ -226,7 +270,7 @@
             }
         }
 
-        // Function to load inmate data from the server
+        // Function to load inmate data from the server COMPLETED
         async function loadInmates() {
           try {
             const response = await fetch("http://localhost:3000/inmates", {
@@ -241,7 +285,8 @@
             console.error("Error loading inmates:", error);
           }
         }
-        // Function to display inmates in the table
+
+        // Function to display inmates in the table COMPLETED
         function displayInmates(rows) {
           const tbody = document.querySelector("#inmateTableBody");
           tbody.innerHTML = "";
@@ -315,6 +360,12 @@
         function closeAddInmateForm() {
             document.getElementById('addInmateForm').style.display = 'none';
         }
+         function openEditInmateForm() {
+            document.getElementById('editInmateForm').style.display = 'block';
+        }
+        function closeEditInmateForm() {
+            document.getElementById('editInmateForm').style.display = 'none';
+        }
 
         function showMessage(message, type) {
             const messageDiv = document.getElementById('message');
@@ -327,15 +378,22 @@
         }
 
         function editInmate(id) {
-            // Placeholder for edit functionality
-            alert('Edit functionality not implemented yet for inmate ID: ' + id);
+            fetch(`http://localhost:3000/inmates/${id}`)
+                .then(res => res.json())
+                .then(inmate => {
+                    document.getElementById("inmateId").value = inmate.id || inmate._id;
+                    document.getElementById("name").value = inmate.name || inmate.Name;
+                    document.getElementById("crime").value = inmate.crime || inmate.Crime;
+                    document.getElementById("sentenceDuration").value = inmate.sentenceDuration;
+                    document.getElementById("arrestDate").value = inmate.arrestDate ? new Date(inmate.arrestDate).toISOString().split("T")[0] : '';
+                    document.getElementById("editInmateForm").style.display = "block";
+                });
         }
 
         function deleteInmate(id) {
-            if (confirm('Are you sure you want to delete this inmate?')) {
-                // Placeholder for delete functionality
-                alert('Delete functionality not implemented yet for inmate ID: ' + id);
-            }
+        fetch(`/inmates/${id}`, {
+            method: "DELETE",
+        }).then(loadInmates);
         }
 
         // Allow Enter key to trigger search
