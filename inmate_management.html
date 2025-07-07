@@ -136,6 +136,15 @@
             <button type="button" onclick="closeEditInmateForm()">Cancel</button>
         </form>
 
+        <!-- Delete Inmate Form -->
+        <form id="deleteInmateForm" style="display: none;">
+            <h3>Delete Inmate</h3>
+            <input type="hidden" name="inmateId" id="deleteInmateId" />
+            <p>Are you sure you want to delete this inmate?</p>
+            <button type="submit">Delete Inmate</button>
+            <button type="button" onclick="closeDeleteInmateForm()">Cancel</button>
+        </form>
+
         <div id="message"></div>
 
         <!-- Search Section -->
@@ -238,6 +247,34 @@
             });
         }
 
+        async function deleteInmate(id) {
+            // Set the hidden input to the correct id before showing the form
+            document.getElementById('deleteInmateId').value = id;
+            document.getElementById('deleteInmateForm').style.display = 'block';
+            // Remove previous event listeners to prevent stacking
+            const form = document.getElementById('deleteInmateForm');
+            const newForm = form.cloneNode(true);
+            form.parentNode.replaceChild(newForm, form);
+            newForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const id = document.getElementById('deleteInmateId').value;
+                try {
+                    const response = await fetch(`http://localhost:3000/inmates/${id}`, {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const result = await response.json();
+                    showMessage('Inmate deleted successfully!', 'success');
+                    closeDeleteInmateForm();
+                    loadAllInmates(); // Refresh the table
+                } catch (error) {
+                    showMessage('Delete failed: ' + error.message, 'error');
+                }
+            });
+        }
         // Function to search the database COMPLETED
         async function searchDatabase() {
             const query = document.getElementById('searchInput').value.trim();
@@ -366,6 +403,13 @@
         function closeEditInmateForm() {
             document.getElementById('editInmateForm').style.display = 'none';
         }
+        function openDeleteInmateForm(id) {
+            document.getElementById('deleteInmateId').value = id;
+            document.getElementById('deleteInmateForm').style.display = 'block';
+        }
+        function closeDeleteInmateForm() {
+            document.getElementById('deleteInmateForm').style.display = 'none';
+        }
 
         function showMessage(message, type) {
             const messageDiv = document.getElementById('message');
@@ -388,12 +432,6 @@
                     document.getElementById("arrestDate").value = inmate.arrestDate ? new Date(inmate.arrestDate).toISOString().split("T")[0] : '';
                     document.getElementById("editInmateForm").style.display = "block";
                 });
-        }
-
-        function deleteInmate(id) {
-        fetch(`/inmates/${id}`, {
-            method: "DELETE",
-        }).then(loadInmates);
         }
 
         // Allow Enter key to trigger search
