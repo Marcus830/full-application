@@ -179,7 +179,7 @@ app.get('/staff/:id', async (req, res) => {
 app.post('/staff', async (req, res) => {
   const { name, role, department, phone } = req.body;
   try {
-    await db.query('INSERT INTO staff (name, role, department, phone) VALUES (?, ?, ?, ?)', 
+    db.query('INSERT INTO staff (name, role, department, phone) VALUES (?, ?, ?, ?)', 
       [name, role, department, phone]);
     res.sendStatus(201);
   } catch (err) {
@@ -191,7 +191,7 @@ app.post('/staff', async (req, res) => {
 app.put('/staff/:id', async (req, res) => {
   const { name, role, department, phone } = req.body;
   try {
-    await db.query(
+    db.query(
       'UPDATE staff SET name = ?, role = ?, department = ?, phone = ? WHERE id = ?',
       [name, role, department, phone, req.params.id]
     );
@@ -204,7 +204,7 @@ app.put('/staff/:id', async (req, res) => {
 // Delete staff
 app.delete('/staff/:id', async (req, res) => {
   try {
-    await db.query('DELETE FROM staff WHERE id = ?', [req.params.id]);
+    db.query('DELETE FROM staff WHERE id = ?', [req.params.id]);
     res.sendStatus(204);
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -40,6 +40,32 @@
             margin-left: 18%;
             padding: 20px;
         }
+        .modal-content input {
+        width: 100%;
+        padding: 8px;
+        margin: 5px 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        }
+
+        .modal-content button {
+            padding: 8px 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .modal-content button[type="submit"] {
+            background-color: #cc0000;
+            color: white;
+        }
+
+        .modal-content button[type="button"] {
+            background-color: #ccc;
+            color: black;
+        }
 
         .form-container, .search-bar {
             display: flex;
@@ -104,7 +130,7 @@
     
     <!-- Sidebar Navigation -->
     <ul>
-        <li><a href="#">Home</a></li>
+        <li><a href="Homepage.html">Home</a></li>
         <li><a href="#">Calendar</a></li>
         <li><a href="#">Contact</a></li>
         <li><a href="#">About</a></li>
@@ -173,7 +199,6 @@
     </div>
 
     <script>
-        // TODO: Function to handle search input
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', function() {
             setupEventListeners();
