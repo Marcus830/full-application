@@ -105,14 +105,19 @@ app.get('/inmates/:id', (req, res) => {
 
 // Insert new inmate
 app.post('/inmates', (req, res) => {
-  const { name, crime, sentenceDuration, arrestDate } = req.body; 
-  
+  const id = req.params.id;
+  const { name, crime, sentenceDuration, arrestDate } = req.body;
+  const ip = req.ip;
+  const userId = 1; // TODO: Replace with actual logged-in user ID when auth is implemented
+
   const sql = 'INSERT INTO inmates (name, crime, sentenceDuration, arrestDate) VALUES (?, ?, ?, ?)';
   db.query(sql, [name, crime, sentenceDuration, arrestDate], (err, result) => {
     if (err) {
       console.error('Insert error:', err);
       return res.status(500).json({ error: 'Database insert failed' }); //TODO: changed schema, might have thrown error
     }
+    // Log this activity
+    logActivity(userId, 'Create', 'Inmates', `Created inmate ID ${result.insertId}`, ip);
     res.json({ message: 'User added successfully', userId: result.insertId });
   });
 });
@@ -142,12 +147,16 @@ app.put('/inmates/:id', (req, res) => {
 // Delete inmate
 app.delete('/inmates/:id', (req, res) => {
   const id = req.params.id;
+  const ip = req.ip;
+  const userId = 1; // TODO: Replace with actual logged-in user ID when auth is implemented
 
   db.query('DELETE FROM inmates WHERE id = ?', [id], (err, result) => {
     if (err) {
       console.error('Delete error:', err);
       return res.status(500).json({ error: 'Database delete failed' });
     }
+    // Log this activity
+    logActivity(userId, 'Delete', 'Inmates', `Deleted inmate ID ${id}`, ip);
     res.json({ message: 'Inmate deleted successfully' });
   });
 });
@@ -176,39 +185,51 @@ app.get('/staff/:id', async (req, res) => {
 });
 
 // Add new staff
-app.post('/staff', async (req, res) => {
+app.post('/staff', (req, res) => {
   const { name, role, department, phone } = req.body;
-  try {
-    db.query('INSERT INTO staff (name, role, department, phone) VALUES (?, ?, ?, ?)', 
-      [name, role, department, phone]);
-    res.sendStatus(201);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  const ip = req.ip;
+  const userId = 1; // TODO: Replace with actual logged-in user ID when auth is implemented
+  db.query('INSERT INTO staff (name, role, department, phone) VALUES (?, ?, ?, ?)', 
+    [name, role, department, phone], (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      logActivity(userId, 'Create', 'Staff', `Created staff ID ${result.insertId}`, ip);
+      res.sendStatus(201);
+    });
 });
 
 // Update staff
-app.put('/staff/:id', async (req, res) => {
+app.put('/staff/:id', (req, res) => {
+  const id = req.params.id;
   const { name, role, department, phone } = req.body;
-  try {
-    db.query(
-      'UPDATE staff SET name = ?, role = ?, department = ?, phone = ? WHERE id = ?',
-      [name, role, department, phone, req.params.id]
-    );
-    res.sendStatus(200);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  const ip = req.ip;
+  const userId = 1; 
+  db.query(
+    'UPDATE staff SET name = ?, role = ?, department = ?, phone = ? WHERE id = ?',
+    [name, role, department, phone, id],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      logActivity(userId, 'Update', 'Staff', `Updated staff ID ${id}`, ip);
+      res.sendStatus(200);
+    }
+  );
 });
 
 // Delete staff
-app.delete('/staff/:id', async (req, res) => {
-  try {
-    db.query('DELETE FROM staff WHERE id = ?', [req.params.id]);
+app.delete('/staff/:id', (req, res) => {
+  const id = req.params.id;
+  const ip = req.ip;
+  const userId = 1; // TODO: Replace with actual logged-in user ID when auth is implemented
+  db.query('DELETE FROM staff WHERE id = ?', [id], (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    logActivity(userId, 'Delete', 'Staff', `Deleted staff ID ${id}`, ip);
     res.sendStatus(204);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  });
 });
 
 // Search inmates by name or crime
