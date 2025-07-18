@@ -102,6 +102,20 @@ app.get('/inmates/:id', (req, res) => {
   });
 });
 
+//fetch inmate bio
+app.get('/bio/:id', (req, res) => {
+  const id = req.params.id;
+  db.query('SELECT * FROM jail.bio WHERE id = ?', [id], (err, results) => {
+    if (err) {
+      console.error('Error fetching inmate bio by ID:', err);
+      res.status(500).json({ error: 'Database error' });
+    } else if (results.length === 0) {
+      res.status(404).json({ error: 'Inmate not found' });
+    } else {
+      res.json(results); // Return the single record
+    }
+  });
+});
 
 // Insert new inmate
 app.post('/inmates', (req, res) => {

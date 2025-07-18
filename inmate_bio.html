@@ -5,6 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        header {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 20px 0;
+            top: 0;
+            z-index: 1000;
+        }
+        header h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0023c0, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+        }
+        header p {
+            text-align: center;
+            color: #666;
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
         /* Sidebar styling */
         ul {
             list-style-type: none;
@@ -58,27 +87,89 @@
             gap: 10px;
             margin-bottom: 15px;
         }
-        .info-table {
-            width: 100%;
-            border-collapse: collapse;
+        .profile-info h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2c3e50;
             margin-bottom: 10px;
         }
+
+        .profile-info .subtitle {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        /* Information Grid */
+        .info-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
         .info-table td {
             padding: 2px 5px;
             vertical-align: top;
             font-size: 9px;
         }
+        .info-table tr{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
         .info-table .label {
-            font-weight: bold;
-            width: 25%;
+            font-weight: 500;
+            color: #666;
+            font-size: 0.95rem;
         }
         .info-table .value {
-            border-bottom: 1px solid #999;
-            width: 25%;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.95rem;
         }
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .record-container {
+                padding: 25px;
+            }
+        }
+
     </style>
     <script>
-        /*
+        
         function getQueryParam(param) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(param);
@@ -90,7 +181,7 @@
             document.getElementById('record-container').textContent = 'No inmate ID provided.';
             return;
         }
-        fetch(`http://localhost:3000/inmates/${id}`)
+        fetch(`http://localhost:3000/bio/${id}`)
             .then(res => {
             if (!res.ok) {
                 throw new Error('Record not found');
@@ -98,30 +189,29 @@
             return res.json();
             })
             .then(data => {
-            const element1 = document.getElementById('name-container');
-            element1.innerHTML = `${data.name} `;
-            const element2 = document.getElementById('age-container');
-            element2.innerHTML = `${data.age} `;
-            const element3 = document.getElementById('crime-container');
-            element3.innerHTML = `${data.crime} `;
-            const element4 = document.getElementById('sentence-container');
-            element4.innerHTML = `${data.sentence} `;
-            const element5 = document.getElementById('status-container');
-            element5.innerHTML = `${data.status}`;
+                const element1 = document.getElementById('name-container');
+                element1.innerHTML = `${data.Name} `;
+                const element2 = document.getElementById('birthplace-container');
+                element2.innerHTML = `${data.birthplace} `;
+                const element6 = document.getElementById('gender-container');
+                element6.innerHTML = `${data.gender}`;
+                const element8 = document.getElementById('race-container');
+                element8.innerHTML = `${data.race}`;
+                const element7 = document.getElementById('height-container');
+                element7.innerHTML = `${data.Height}`; 
+                const element9 = document.getElementById('weight-container');
+                element9.innerHTML = `${data.Weight}`;
             })
             .catch(error => {
             document.getElementById('record-container').textContent = error.message;
             });
         }
-        */
-  </script>
-
-        
+  </script>    
 </head>
 <body>
-    <header style="background-color: #333; color: white; padding: 10px; text-align: center;">
+    <header>
         <h1>Inmate Management System</h1>
-        <p>Managing Inmates</p>
+        <p>Professional Correctional Facility Management</p>
     </header>
     
     <!-- Sidebar Navigation -->
@@ -134,14 +224,20 @@
 
     <div id="record-container">
         <div class="left-section">
-                <div class="photo-section">
-                    <div class="main-photo"> <img src="2c47d5dd5b532f83bb55c4cd6f5bd1ef.jpg" alt="Inmate Photo"></div>
-                </div>
+            <div class="photo-section">
+                <div class="main-photo"> <img src="2c47d5dd5b532f83bb55c4cd6f5bd1ef.jpg" alt="Inmate Photo"></div>
+            </div>
+            <div class="profile-info">
+                <h2 id="name-container">John Michael Smith</h2>
+                <div class="subtitle">Inmate ID: <span id="inmate-id">Loading...</span></div>
+                <div class="status-badge" id="status-container">Active</div>
+            </div>
 
-                <table class="info-table">
+            <table class="info-table">
+                <div class="info-section">
                     <tr>
                         <td class="label">FULL NAME:</td>
-                        <td class="name-container"></td>
+                        <td id="name-container"></td>
                         <td class="label">DATE OF BIRTH:</td>
                         <td class="value">01/15/1985</td>
                     </tr>
@@ -149,31 +245,22 @@
                         <td class="label">NICKNAME:</td>
                         <td class="value">MIKE</td>
                         <td class="label">PLACE OF BIRTH:</td>
-                        <td class="value">NEW YORK, NY</td>
+                        <td id="birthplace-container">NEW YORK, NY</td>
                     </tr>
                     <tr>
                         <td class="label">GENDER:</td>
-                        <td class="value">MALE</td>
+                        <td id="gender-container">MALE</td>
                         <td class="label">NATIONALITY:</td>
-                        <td class="value">AMERICAN</td>
+                        <td id="race-container">AMERICAN</td>
                     </tr>
                     <tr>
                         <td class="label">HEIGHT:</td>
-                        <td class="value">5'10"</td>
+                        <td id="height-container">5'10"</td>
                         <td class="label">WEIGHT:</td>
-                        <td class="value">175 LBS</td>
+                        <td id="weight-container"> lbs</td>
                     </tr>
-                    <tr>
-                        <td class="label">EYE COLOR:</td>
-                        <td class="value">BROWN</td>
-                        <td class="label">HAIR COLOR:</td>
-                        <td class="value">BLACK</td>
-                    </tr>
-                    <tr>
-                        <td class="label">DISTINGUISHING MARKS:</td>
-                        <td class="value" colspan="3">SCAR ON LEFT FOREARM</td>
-                    </tr>
-                </table>
+                </div>
+            </table>
             </div>
 
             <div class="right-section">
