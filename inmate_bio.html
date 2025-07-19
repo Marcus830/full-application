@@ -38,7 +38,7 @@
         ul {
             list-style-type: none;
             margin: 0;
-            padding: 0;
+            padding: 0, 20px;
             width: 15%;
             background-color: #ada1a1;
             height: 100vh; /* Full viewport height */
@@ -48,24 +48,41 @@
 
         ul li a {
             display: block;
-            color: #000;
+            color: #555;
             text-align: center;
-            padding: 12px;
+            font-size: 25px;
+            padding: 15px 20px;
             text-decoration: none;
             font-weight: bold;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
         }
 
         ul li a:hover {
             background-color: #888;
             color: white;
+            transform: translateX(5px);
+        }
+        /* main content */
+        #profile-photo {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 6px solid white;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        #profile-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         #record-container {
-            margin-left: 15%;
-            padding: 20px;
-            background-color: #c5c5c5;
-            border-radius: 8px;
+            margin-left: 280px;
+            padding: 40px;
+            min-height: 100vh;
         }
-        #record-container img {
+        .record-container img {
             width: 150px;
             height: 150px;
             border-radius: 50%;
@@ -100,73 +117,55 @@
             margin-bottom: 15px;
         }
 
-        .status-badge {
-            display: inline-block;
-            padding: 8px 16px;
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-            color: white;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
         /* Information Grid */
         .info-table {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
             margin-bottom: 30px;
+            font-size: 1.05rem;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border-radius: 8px;
+            overflow: hidden;
         }
-        
-        .info-table td {
-            padding: 2px 5px;
-            vertical-align: top;
-            font-size: 9px;
+        .info-table th, .info-table td {
+            padding: 14px 16px;
+            text-align: left;
+            vertical-align: middle;
+            border-bottom: 1px solid #e0e0e0;
         }
-        .info-table tr{
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        .info-table th {
+            background: #f5f7fa;
+            color: #222;
+            font-weight: 700;
+            font-size: 1.08rem;
+            letter-spacing: 0.5px;
+        }
+        .info-table tr:nth-child(even) {
+            background: #f8fafc;
+        }
+        .info-table tr:nth-child(odd) {
+            background: #fff;
         }
         .info-table .label {
-            font-weight: 500;
-            color: #666;
-            font-size: 0.95rem;
-        }
-        .info-table .value {
             font-weight: 600;
             color: #2c3e50;
-            font-size: 0.95rem;
+            font-size: 1rem;
         }
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .main-content {
-                margin-left: 0;
-                padding: 20px;
-            }
-            
-            .info-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .profile-header {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .record-container {
-                padding: 25px;
-            }
+        .info-table .value {
+            color: #444;
         }
-
+        .info-table tr:last-child td {
+            border-bottom: none;
+        }
+        .section-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #3a3a3a;
+            margin: 18px 0 8px 0;
+            letter-spacing: 1px;
+        }
     </style>
     <script>
         
@@ -176,35 +175,33 @@
         }
         
         window.onload = function fetchRecord() {
-        const id = getQueryParam('id');
-        if (!id) {
-            document.getElementById('record-container').textContent = 'No inmate ID provided.';
-            return;
-        }
-        fetch(`http://localhost:3000/bio/${id}`)
-            .then(res => {
-            if (!res.ok) {
-                throw new Error('Record not found');
+            const id = getQueryParam('id');
+            if (!id) {
+                document.getElementById('record-container').textContent = 'No inmate ID provided.';
+                return;
             }
-            return res.json();
-            })
-            .then(data => {
-                const element1 = document.getElementById('name-container');
-                element1.innerHTML = `${data.Name} `;
-                const element2 = document.getElementById('birthplace-container');
-                element2.innerHTML = `${data.birthplace} `;
-                const element6 = document.getElementById('gender-container');
-                element6.innerHTML = `${data.gender}`;
-                const element8 = document.getElementById('race-container');
-                element8.innerHTML = `${data.race}`;
-                const element7 = document.getElementById('height-container');
-                element7.innerHTML = `${data.Height}`; 
-                const element9 = document.getElementById('weight-container');
-                element9.innerHTML = `${data.Weight}`;
-            })
-            .catch(error => {
-            document.getElementById('record-container').textContent = error.message;
-            });
+            fetch(`http://localhost:3000/bio/${id}`)
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error('Record not found');
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    const inmate = Array.isArray(data) ? data[0] : data; // Handle case where data is an array
+                    document.getElementById('inmate-id').innerHTML = `${inmate.id}`;
+                    document.getElementById('name-header').innerHTML = `${inmate.Name}`;
+                    document.getElementById('name-table').innerHTML = `${inmate.Name}`;
+                    document.getElementById('birthplace-container').innerHTML = `${inmate.birthplace}`;
+                    document.getElementById('gender-container').innerHTML = `${inmate.gender}`;
+                    document.getElementById('race-container').innerHTML = `${inmate.race}`;
+                    document.getElementById('height-container').innerHTML = `${inmate.Height}`;
+                    document.getElementById('weight-container').innerHTML = `${inmate.Weight}`;
+                })
+                .catch(error => {
+                    document.getElementById('record-container').textContent = error.message;
+                });
         }
   </script>    
 </head>
@@ -225,10 +222,10 @@
     <div id="record-container">
         <div class="left-section">
             <div class="photo-section">
-                <div class="main-photo"> <img src="2c47d5dd5b532f83bb55c4cd6f5bd1ef.jpg" alt="Inmate Photo"></div>
+                <div id="profile-photo"> <img src="2c47d5dd5b532f83bb55c4cd6f5bd1ef.jpg" alt="Inmate Photo"></div>
             </div>
             <div class="profile-info">
-                <h2 id="name-container">John Michael Smith</h2>
+                <h2 id="name-header"></h2>
                 <div class="subtitle">Inmate ID: <span id="inmate-id">Loading...</span></div>
                 <div class="status-badge" id="status-container">Active</div>
             </div>
@@ -237,7 +234,7 @@
                 <div class="info-section">
                     <tr>
                         <td class="label">FULL NAME:</td>
-                        <td id="name-container"></td>
+                        <td id="name-table"></td>
                         <td class="label">DATE OF BIRTH:</td>
                         <td class="value">01/15/1985</td>
                     </tr>

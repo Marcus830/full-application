@@ -112,7 +112,7 @@ app.get('/bio/:id', (req, res) => {
     } else if (results.length === 0) {
       res.status(404).json({ error: 'Inmate not found' });
     } else {
-      res.json(results); // Return the single record
+      res.json(results);
     }
   });
 });
