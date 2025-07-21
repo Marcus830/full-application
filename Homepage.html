@@ -113,7 +113,13 @@
         }
     </style>
     <script>
-        //fetching data for imate count
+        //function to pass in the userid
+        function getUserId() {
+            // Assuming you have a way to get the logged-in user's ID
+            return 1; // Replace with actual user ID
+        }
+
+        //fetching data for inmate count
         fetch('http://localhost:3000/inmates/count')
         .then(response => response.json())
         .then(data => {
@@ -172,7 +178,7 @@
 <body>
     <header style="background-color: #000c66; color: white; padding: 10px; text-align: center;">
         <h1>Department of Correction</h1>
-        <h2>Welcome {user.name}</h2>
+        <h2>Welcome </h2>
         <p>Manage inmates, staff, and incidents efficiently</p>
     </header>
   

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0; 
+            background: linear-gradient(to bottom, #2f00ff, #020000);
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: rgb(243, 239, 0);
+        }
+        p {
+            font-size: 16px;
+            color: yellow;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            
+        }
+        form {
+            margin-top: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: yellow;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="password"] ,input[type="email"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+
+        }
+        role {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: navy;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #e5ff00;
+            color: black;
+        }
+        #login-prompt {
+            margin-top: 20px;
+            color: yellow;
+            font-size: 12px;
+        }
+    </style>
+    <script> 
+    // Function to add new user
+    document.addEventListener('DOMContentLoaded', function() {
+        const registrationForm = document.getElementById('registration-form');
+        const messageDiv = document.getElementById('message');
+        
+        registrationForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            messageDiv.style.display = 'none';
+            
+            const formData = new FormData(this);
+            const userData = {
+                username: formData.get('username'),
+                email: formData.get('email'),
+                password: formData.get('password'),
+                role: formData.get('role')
+            };
+
+            const staffData = {
+                name: formData.get('name'),
+                role: formData.get('role'),
+                department: formData.get('department'),
+                phone: formData.get('phone')
+            };
+
+            if (userData.password.length < 6) {
+                showMessage('Password must be at least 6 characters long', 'error');
+                return;
+            }
+            console.log('Form data:', { userData, staffData });
+            try {
+                const response = await fetch('http://localhost:3000/staff', {
+                    method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                        name: staffData.name,
+                        role: staffData.role,
+                        department: staffData.department,
+                        phone: staffData.phone
+                    })
+                    });
+
+                if (response.ok) {
+                    console.log('Staff member added successfully');
+                } else {
+                    const text = await response.text(); // Safer fallback
+                    console.error('Server returned non-JSON response:', text);
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                return { success: false, message: 'Network error occurred' };
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: userData.username,
+                        email: userData.email,
+                        password: userData.password,
+                        role: userData.role,
+                        name: staffData.name,
+                        phone: staffData.phone,
+                        department: staffData.department
+                    })
+                });
+
+                if (response.ok) {
+                    const result = response.json();
+                    console.log('User added successfully:', result);
+                    return { success: true, message: 'User added successfully', userId: result.userId };
+                } else {
+                    const errorData = response.json();
+                    console.error('Error adding user:', errorData.error);
+                    return { success: false, message: errorData.error };
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                return { success: false, message: 'Network error occurred' };
+            }
+        });
+        
+        function showMessage(message, type) {
+            messageDiv.textContent = message;
+            messageDiv.className = type === 'success' ? 'success-message' : 'error-message';
+            messageDiv.style.display = 'block';
+        }
+    });
+    </script>
+    <h1>Correctional Facility Management Software</h1>
+    <p>Please register to continue.</p>
+    
+    <div id="message" class="error-message" style="display: none;"></div>
+    
+    <form id="registration-form">
+        <div>
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div>
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" name="phone" required>
+        </div>
+        <div>
+            <label for="role">Pick your role:</label>
+            <select name="role" id="role" required>
+                <option value="">Select Role</option>
+                <option value="Correctional Officer (CO)">Correctional Officer (CO)</option>
+                <option value="Clerk">Clerk</option>
+                <option value="Kitchen Staff">Kitchen Staff</option>
+                <option value="Operator">Operator</option>
+                <option value="Psychologist / Counselor">Psychologist / Counselor</option>
+                <option value="Chaplain">Chaplain</option>
+            </select>
+        </div>
+        <div>
+            <label for="department">Pick your department:</label>
+            <select name="department" id="department" required>
+                <option value="">Select Department</option>
+                <option value="Security">Correctional Security Guard</option>
+                <option value="General Services">General Services</option>
+                <option value="Maintenance">Maintenance</option>
+                <option value="Engineering">Engineering</option>
+                <option value="Administration">Administration</option>
+                <option value="Medical">Medical</option>
+            </select>
+        </div>
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div>
+            <label for="password">Password (minimum 6 characters):</label>
+            <input type="password" id="password" name="password" required minlength="6">
+        </div>
+        <button type="submit">Register</button>
+        <button type="button" onclick="window.location.href='Log_in_page.html'">Back to Login</button>
+    </form>
+    
+    <p id="login-prompt">Already have an account? <a href="Log_in_page.html">Log in here</a>.</p>
+</html>

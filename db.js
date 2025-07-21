@@ -23,4 +23,7 @@ pool.getConnection((err, connection) => {
 });
 
 
-module.exports = pool;
+module.exports = {
+  pool,
+  query: (...args) => pool.query(...args)
+};
