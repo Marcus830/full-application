@@ -1,35 +1,50 @@
+require('dotenv').config();
 
 const express = require('express');
 const app = express();
 const db = require('./db');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
+const passport = require('passport')
+const flash = require('express-flash')
+const session = require('express-session')
+const methodOverride = require('method-override')
 
 
 
+
+// Middleware to handle JSON body parsing
 app.use(express.json());
+
+// Middleware to handle CORS
 app.use(cors({
   origin: ['http://localhost:3000', 'null']
 }));
 
+app.set('view-engine', 'ejs')
+app.use(express.urlencoded({ extended: false }))
+app.use(flash())
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: true }
+}))
+app.use(passport.initialize())
+app.use(passport.session())
+app.use(methodOverride('_method'))
 
 
 // REGISTRATION ROUTE - NO AUTHENTICATION REQUIRED
 app.post('/users', async (req, res) => {
-  console.log('=== REGISTRATION REQUEST ===');
-  console.log('Request body:', req.body);
-  console.log('Content-Type:', req.headers['content-type']);
-  
   try {
-    const { username, email, password, role, name, phone, department } = req.body;
-    
-    console.log('Extracted fields:', { username, email, password: '***', role, name, phone, department });
-    
+    const { username, email, password, role } = req.body;
+
     // Validate required fields - Updated to match your form
-    if (!username || !email || !password || !role || !name) {
+    if (!username || !email || !password || !role) {
       console.log('Missing required fields');
-      return res.status(400).json({ 
-        error: 'All fields (name, username, email, password, role) are required' 
+      return res.status(400).json({
+        error: 'All fields (username, email, password, role) are required'
       });
     }
     
@@ -61,14 +76,10 @@ app.post('/users', async (req, res) => {
       try {
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
-        console.log('Password hashed successfully');
         
         // Insert new user - Updated to match your form fields
-        const insertQuery = 'INSERT INTO users (username, email, password_hash, role, name, phone, department) VALUES (?, ?, ?, ?, ?, ?, ?)';
-        const insertValues = [username, email, hashedPassword, role, name, phone || null, department || null];
-        
-        console.log('Executing insert query:', insertQuery);
-        console.log('With values:', [username, email, '***', role, name, phone || null, department || null]);
+        const insertQuery = 'INSERT INTO users (username, email, password_hash, role) VALUES (?, ?, ?, ?)';
+        const insertValues = [username, email, hashedPassword, role];
 
         db.query(insertQuery, insertValues, (err, result) => {
           if (err) {
@@ -94,6 +105,7 @@ app.post('/users', async (req, res) => {
   }
 });
 
+// STAFF ROUTE - AUTHENTICATION REQUIRED
 app.post('/staff', (req, res) => {
   const { name, role, department, phone } = req.body;
 
@@ -116,6 +128,20 @@ app.post('/staff', (req, res) => {
   });
 });
 
+function checkAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next()
+  }
+
+  res.redirect('/login')
+}
+
+function checkNotAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return res.redirect('/')
+  }
+  next()
+}
 
 
 

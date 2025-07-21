@@ -78,6 +78,23 @@
             color: yellow;
             font-size: 12px;
         }
+        .error-message, .success-message {
+            display: none;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .error-message {
+            background-color: #ffebee;
+            color: #d32f2f;
+        }
+
+        .success-message {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
     </style>
     <script> 
     // Function to add new user
@@ -109,61 +126,51 @@
                 showMessage('Password must be at least 6 characters long', 'error');
                 return;
             }
-            console.log('Form data:', { userData, staffData });
+
             try {
-                const response = await fetch('http://localhost:3000/staff', {
+                // First try to add staff
+                const staffResponse = await fetch('http://localhost:3000/staff', {
                     method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
                         name: staffData.name,
                         role: staffData.role,
                         department: staffData.department,
                         phone: staffData.phone
                     })
-                    });
+                });
 
-                if (response.ok) {
-                    console.log('Staff member added successfully');
-                } else {
-                    const text = await response.text(); // Safer fallback
-                    console.error('Server returned non-JSON response:', text);
+                if (!staffResponse.ok) {
+                    const text = await staffResponse.text();
+                    showMessage('Failed to register staff: ' + text, 'error');
+                    return;
                 }
-            } catch (error) {
-                console.error('Network error:', error);
-                return { success: false, message: 'Network error occurred' };
-            }
 
-            try {
-                const response = await fetch('http://localhost:3000/users', {
+                // Then try to add user
+                const userResponse = await fetch('http://localhost:3000/users', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         username: userData.username,
                         email: userData.email,
                         password: userData.password,
-                        role: userData.role,
-                        name: staffData.name,
-                        phone: staffData.phone,
-                        department: staffData.department
+                        role: userData.role
                     })
                 });
 
-                if (response.ok) {
-                    const result = response.json();
-                    console.log('User added successfully:', result);
-                    return { success: true, message: 'User added successfully', userId: result.userId };
-                } else {
-                    const errorData = response.json();
-                    console.error('Error adding user:', errorData.error);
-                    return { success: false, message: errorData.error };
+                if (!userResponse.ok) {
+                    const errorData = await userResponse.json();
+                    showMessage('Failed to register user: ' + (errorData.error || 'Unknown error'), 'error');
+                    return;
                 }
+
+                // If both succeeded
+                registrationForm.reset();
+                showMessage('Registration successful! You can now log in.', 'success');
+                
             } catch (error) {
                 console.error('Network error:', error);
-                return { success: false, message: 'Network error occurred' };
+                showMessage('Network error occurred. Please try again.', 'error');
             }
         });
         
@@ -171,13 +178,19 @@
             messageDiv.textContent = message;
             messageDiv.className = type === 'success' ? 'success-message' : 'error-message';
             messageDiv.style.display = 'block';
+            messageDiv.style.color = type === 'success' ? 'green' : 'red';
+            messageDiv.style.fontWeight = 'bold';
+            messageDiv.style.backgroundColor = 'white';
+            messageDiv.style.padding = '10px';
+            messageDiv.style.borderRadius = '4px';
+            messageDiv.style.margin = '10px 0';
         }
     });
     </script>
     <h1>Correctional Facility Management Software</h1>
     <p>Please register to continue.</p>
     
-    <div id="message" class="error-message" style="display: none;"></div>
+    <div id="message" class="error-message" style="display: block;"></div>
     
     <form id="registration-form">
         <div>
