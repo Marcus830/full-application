@@ -9,8 +9,7 @@ const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
 const methodOverride = require('method-override')
-
-
+const path = require('path');
 
 
 // Middleware to handle JSON body parsing
@@ -25,15 +24,67 @@ app.set('view-engine', 'ejs')
 app.use(express.urlencoded({ extended: false }))
 app.use(flash())
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: process.env.SESSION_SECRET || 'default_secret',
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: true }
+  cookie: { secure: false }
 }))
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(methodOverride('_method'))
+app.use(express.static(path.join(__dirname, 'public')));
 
+
+// Passport configuration
+const initializePassport = require('./passport-config')
+initializePassport(passport)
+
+app.post('/login', async (req, res) => { // Make the callback async
+  const { username, password } = req.body;
+
+  // Validate request data first
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Username and password are required' });
+  }
+
+  db.query('SELECT * FROM users WHERE username = ?', [username], async (err, results) => {
+  if (err) {
+    console.error('Database error:', err);
+    return res.status(500).json({ error: 'Database error' });
+  }
+
+  if (results.length === 0) {
+    return res.status(401).json({ error: 'Invalid username' });
+  }
+
+  const user = results[0];
+
+  try {
+    if (!password || !user.password_hash) {
+      console.error('Missing password or password_hash');
+      return res.status(400).json({ error: 'Missing password or password hash' });
+    }
+
+    console.log('Comparing password:', password, 'with hash:', user.password_hash);
+    const isMatch = await bcrypt.compare(password, user.password_hash);
+
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Incorrect password' });
+    }
+
+    return res.status(200).json({
+      message: 'Login successful',
+      user: {
+        id: user.id,
+        username: user.username
+      }
+    });
+  } catch (error) {
+    console.error('Error during login processing:', error);
+    return res.status(500).json({ error: 'Login failed: ' + error.message });
+  }
+  });
+});
 
 // REGISTRATION ROUTE - NO AUTHENTICATION REQUIRED
 app.post('/users', async (req, res) => {

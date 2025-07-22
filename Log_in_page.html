@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script defer src="authServer.js"></script>
 </head>
 <body>
     <style>
@@ -69,9 +68,56 @@
             color: black;
         }
     </style>
+    <script>
+        // Function to handle form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('login-form').addEventListener('submit', async function(event){
+                event.preventDefault(); // Prevent the default form submission
+                
+                // Get form data
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+    
+                // Validate input
+                if (!username || !password) {
+                    alert('Please fill in all fields.');
+                    return;
+                }
+    
+                // Create a FormData object to send the data
+                const formData = new FormData();
+                formData.append('username', username);
+                formData.append('password', password);
+    
+                // Send the form data to the server
+                const response = await fetch('http://localhost:3000/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = 'homepage.html'; // Redirect to the homepage
+                    } else {
+                       const json = response.json();
+                       console.log('Server response:', json);
+                       alert('Login failed: ' + json.error);
+                    }
+                })
+                .catch(error => {
+                   console.error('Error:', error);
+                    alert('Login failed. Is the server running? Error: ' + error.message);
+                });
+            });
+    
+        });
+    </script>
     <h1>Correctional Facility Management Software</h1>
     <p> Please log in to continue.</p>
-    <form id="login-form" action="/log_in_page.html" method="POST">
+    <form id="login-form">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
         <span class="error-message" style="color: red;"></span>
