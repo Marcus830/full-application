@@ -10,14 +10,38 @@
             height: 100vh;
             margin: 0;
         }
+        header {
+            background: #333;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 20px 0;
+            top: 0;
+            z-index: 1000;
+        }
+        header h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: #ffeb3b;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+        }
+        header p {
+            text-align: center;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
         /* Sidebar styling */
         ul {
             list-style-type: none;
             margin: 0;
             padding: 0;
             width: 15%;
-            background-color: #301fc4;
-            height: 100%;
+            background-color: #ada1a1;
+            height: 100vh; /* Full viewport height */
             position: absolute;
             overflow: auto;
         }
@@ -25,8 +49,9 @@
         ul li a {
             display: block;
             color: #000;
+            font-size: 25px;
+            padding: 15px 20px;
             text-align: center;
-            padding: 12px;
             text-decoration: none;
             font-weight: bold;
         }
@@ -51,7 +76,7 @@
             font-size: 20px;
             border-radius: 8px;
             transition: background-color 0.4s, transform 0.2s;
-            background-color: #ff0101;
+            background-color: #0112ff;
             color: white;
             border: none;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
@@ -59,7 +84,9 @@
         }
 
         button:hover {
-            background-color: #cc0000;
+            background-color: #e5ff00;
+            color: black;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3), 0 8px 28px rgba(0, 0, 0, 0.25);
             transform: scale(1.05);
         }
 
@@ -176,17 +203,15 @@
     </script>
 </head>
 <body>
-    <header style="background-color: #000c66; color: white; padding: 10px; text-align: center;">
-        <h1>Department of Correction</h1>
-        <h2>Welcome </h2>
-        <p>Manage inmates, staff, and incidents efficiently</p>
+    <header>
+        <h1>Department of Corrections</h1>
+        <h1>Welcome </h1>
+        <p>Professional Correctional Facility Management</p>
     </header>
   
     <!-- Sidebar Navigation -->
     <ul>
         <li><a href="Homepage.html">Home</a></li>
-        <li><a href="#">Calendar</a></li>
-        <li><a href="#">Notifications</a></li>
         <li><a href="Log_in_page.html">Logout</a></li>
     </ul>
 
