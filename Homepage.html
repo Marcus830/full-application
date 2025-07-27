@@ -140,11 +140,16 @@
         }
     </style>
     <script>
-        //function to pass in the userid
-        function getUserId() {
-            // Assuming you have a way to get the logged-in user's ID
-            return 1; // Replace with actual user ID
-        }
+        //function to get the user ID
+        fetch('http://localhost:3000/users/${id}')
+        .then(response => response.json())
+        .then(data => {
+            document.querySelector('header h1').innerText = `Welcome ${data.username}`;
+        })
+        .catch(error => {
+            console.error('Error fetching user data:', error);
+            document.querySelector('header h1').innerText = 'Welcome User';
+        });
 
         //fetching data for inmate count
         fetch('http://localhost:3000/inmates/count')
@@ -205,6 +210,7 @@
 <body>
     <header>
         <h1>Department of Corrections</h1>
+        //TODO: add the username of the logged in user
         <h1>Welcome </h1>
         <p>Professional Correctional Facility Management</p>
     </header>
@@ -224,10 +230,6 @@
         <div class="stats-card">
             <h3>Staff Members</h3>
             <p></p>
-        </div>
-        <div class="stats-card">
-            <h3>Upcoming Visits</h3>
-            <p>15</p>
         </div>
         <div class="stats-card">
             <h3>Occupied Cells</h3>

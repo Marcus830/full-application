@@ -41,6 +41,25 @@ app.get('/activity-logs', (req, res) => {
   });
 });
 
+// Get the user that is logged in
+app.get('/users/:id', (req, res) => {
+  const id = req.params.id;
+  db.query('SELECT staff.name, users.username FROM staff JOIN users ON staff.name = users.username WHERE users.username = ?', [id], (err, results) => {
+    if (err) {
+      console.error('Error fetching user by ID:', err);
+      res.status(500).json({ error: 'Database error' });
+      console.error('Database error:', err);
+    } else if (results.length === 0) {
+      res.status(404).json({ error: 'User not found' });
+      console.error('User not found for ID:', id);
+    } else {
+      res.json(results[0]); // Return the single record
+      console.log('User fetched successfully:', results[0]);
+    }
+    console.log('Fetching user by ID:', id);
+  });
+});
+
 //number of inmates
 app.get('/inmates/count', (req, res) => {
 
@@ -124,8 +143,8 @@ app.post('/inmates', (req, res) => {
   const ip = req.ip;
   const userId = 1; // TODO: Replace with actual logged-in user ID when auth is implemented
 
-  const sql = 'INSERT INTO inmates (name, crime, sentenceDuration, arrestDate) VALUES (?, ?, ?, ?)';
-  db.query(sql, [name, crime, sentenceDuration, arrestDate], (err, result) => {
+  const sql = 'INSERT INTO inmates (name, crime, sentenceDuration, arrestDate, cellNumber) VALUES (?, ?, ?, ?, ?)';
+  db.query(sql, [name, crime, sentenceDuration, arrestDate, cellNumber], (err, result) => {
     if (err) {
       console.error('Insert error:', err);
       return res.status(500).json({ error: 'Database insert failed' }); //TODO: changed schema, might have thrown error
@@ -139,12 +158,12 @@ app.post('/inmates', (req, res) => {
 // Update inmate
 app.put('/inmates/:id', (req, res) => {
   const id = req.params.id;
-  const { name, crime, sentenceDuration, arrestDate } = req.body;
+  const { name, crime, sentenceDuration, arrestDate, cellNumber } = req.body;
   const ip = req.ip;
   const userId = 1; // TODO: Replace with actual logged-in user ID when auth is implemented
 
-  const sql = 'UPDATE inmates SET name = ?, crime = ?, sentenceDuration = ?, arrestDate = ? WHERE id = ?';
-  db.query(sql, [name, crime, sentenceDuration, arrestDate, id], (err, result) => {
+  const sql = 'UPDATE inmates SET name = ?, crime = ?, sentenceDuration = ?, arrestDate = ?, cellNumber = ? WHERE id = ?';
+  db.query(sql, [name, crime, sentenceDuration, arrestDate, cellNumber, id], (err, result) => {
     if (err) {
       console.error('Update error:', err);
       return res.status(500).json({ error: 'Database update failed' });

@@ -181,6 +181,7 @@
             <input type="text" name="crime" placeholder="Crime" required />
             <input type="number" name="sentenceDuration" placeholder="Sentence Duration (years)" required />
             <input type="date" name="arrestDate" required />
+            <input type="text" name="cellNumber" placeholder="Cell Number" required />
             <button type="submit">Add Inmate</button>
             <button type="button" onclick="closeAddInmateForm()">Cancel</button>
         </form>
@@ -193,6 +194,7 @@
             <input type="text" name="crime" id="crime" placeholder="Crime" required />
             <input type="number" name="sentenceDuration" id="sentenceDuration" placeholder="Sentence Duration (years)" required />
             <input type="date" name="arrestDate" id="arrestDate" required />
+            <input type="text" name="cellNumber" id="cellNumber" pattern="[A-Z]-\d{3}" placeholder="Cell Number (e.g., C-101)" required />
             <button type="submit">Update Inmate</button>
             <button type="button" onclick="closeEditInmateForm()">Cancel</button>
         </form>
@@ -222,6 +224,7 @@
                     <th>Crime</th>
                     <th>Sentence Duration</th>
                     <th>Arrest Date</th>
+                    <th>Cell Number</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -251,7 +254,8 @@
                     name: formData.get('name'),
                     crime: formData.get('crime'),
                     sentenceDuration: formData.get('sentenceDuration'),
-                    arrestDate: formData.get('arrestDate') 
+                    arrestDate: formData.get('arrestDate'),
+                    cellNumber: formData.get('cellNumber')
                 };
 
                 try {
@@ -399,6 +403,7 @@
               <td>${inmate.crime || 'N/A'}</td>
               <td>${inmate.sentenceDuration || 'N/A'} years</td>
               <td>${inmate.arrestDate ? new Date(inmate.arrestDate).toLocaleDateString() : 'N/A'}</td>
+              <td>${inmate.cellNumber || 'N/A'}</td>
               <td>
                 <button onclick="editInmate(${inmate.id})">Edit</button>
                 <button onclick="deleteInmate(${inmate.id})">Delete</button>
@@ -442,6 +447,7 @@
                     <td>${inmate.Crime || 'N/A'}</td>
                     <td>${inmate.sentenceDuration || 'N/A'} years</td>
                     <td>${inmate.arrestDate ? new Date(inmate.arrestDate).toLocaleDateString() : 'N/A'}</td>
+                    <td>${inmate.cellNumber || 'N/A'}</td>
                     <td>
                         <button onclick="editInmate(${inmate.id})">Edit</button>
                         <button onclick="deleteInmate(${inmate.id})">Delete</button>
@@ -490,6 +496,7 @@
                     document.getElementById("crime").value = inmate.crime || inmate.Crime;
                     document.getElementById("sentenceDuration").value = inmate.sentenceDuration;
                     document.getElementById("arrestDate").value = inmate.arrestDate ? new Date(inmate.arrestDate).toISOString().split("T")[0] : '';
+                    document.getElementById("cellNumber").value = inmate.cellNumber || '';
                     document.getElementById("editInmateForm").style.display = "block";
                 });
         }

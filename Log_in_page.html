@@ -102,6 +102,13 @@
                     if (response.ok) {
                         window.location.href = 'homepage.html'; // Redirect to the homepage
                     } else {
+                        if ( response.status === 404) {
+                            alert('Server not found. Please check if the server is running.');
+                        } else if (response.status === 500) {
+                            alert('Internal server error. Please try again later.');
+                        } else {
+                            alert('Login failed. Please check your credentials.');
+                        }
                        const json = response.json();
                        console.log('Server response:', json);
                        alert('Login failed: ' + json.error);
@@ -109,7 +116,7 @@
                 })
                 .catch(error => {
                    console.error('Error:', error);
-                    alert('Login failed. Is the server running? Error: ' + error.message);
+                    alert('Login failed' + error.message);
                 });
             });
     
