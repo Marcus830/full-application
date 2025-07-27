@@ -17,7 +17,7 @@ app.use(express.json());
 
 // Middleware to handle CORS
 app.use(cors({
-  origin: ['http://localhost:3000', 'null']
+  origin: ['http://localhost:3000', 'http://localhost:3001', 'null']
 }));
 
 app.set('view-engine', 'ejs')
@@ -39,7 +39,32 @@ app.use(express.static(path.join(__dirname, 'public')));
 const initializePassport = require('./passport-config')
 initializePassport(passport)
 
-app.post('/login', async (req, res) => { // Make the callback async
+
+//get the user name 
+app.get('/users/:id', (req, res) => {
+  const userId = req.params.id;
+
+  db.query('SELECT staff.name, users.username FROM staff JOIN users ON staff.id = users.id', [userId], (err, results) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).json({ error: 'Database error' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    // Assuming results contains the user data
+    const user = results[0];
+    res.status(200).json({
+      id: user.id, //ReferenceError: users is not defined
+      username: user.username,
+      staff_id: staff.id,
+      name: staff.name
+    });
+  });
+});
+
+app.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
   // Validate request data first
@@ -197,6 +222,6 @@ function checkNotAuthenticated(req, res, next) {
 
 
 // Start server
-app.listen(3000, () => {
-  console.log('Server running on http://localhost:3000');
+app.listen(3001, () => {
+  console.log('Server running on http://localhost:3001');
 });

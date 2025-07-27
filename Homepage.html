@@ -28,7 +28,7 @@
             background-clip: text;
             margin-bottom: 5px;
         }
-        header p {
+        header p , header h2 {
             text-align: center;
             color: #fff;
             font-size: 1.1rem;
@@ -144,11 +144,11 @@
         fetch('http://localhost:3000/users/${id}')
         .then(response => response.json())
         .then(data => {
-            document.querySelector('header h1').innerText = `Welcome ${data.username}`;
+            document.querySelector('header h2').innerText = `Welcome ${data.name}`;
         })
         .catch(error => {
             console.error('Error fetching user data:', error);
-            document.querySelector('header h1').innerText = 'Welcome User';
+            document.querySelector('header h2').innerText = 'Welcome !!';
         });
 
         //fetching data for inmate count
@@ -209,9 +209,8 @@
 </head>
 <body>
     <header>
-        <h1>Department of Corrections</h1>
-        //TODO: add the username of the logged in user
-        <h1>Welcome </h1>
+        <h1>Jail Management System</h1>
+        <h2></h2>
         <p>Professional Correctional Facility Management</p>
     </header>
   
@@ -231,14 +230,6 @@
             <h3>Staff Members</h3>
             <p></p>
         </div>
-        <div class="stats-card">
-            <h3>Occupied Cells</h3>
-            <p>60</p>
-        </div>
-        <div class="stats-card">
-            <h3>Vacant Cells</h3>
-            <p>0</p>
-        </div>
     </div>
     <!-- Recent Activity Section -->
     <h2>Recent Activity</h2>
@@ -256,7 +247,6 @@
     <div class="button-container">
         <button onclick="navigateTo('inmate')">Inmate Record Management</button>
         <button onclick="navigateTo('staff')">Staff Scheduling and Management</button>
-        <button onclick="navigateTo('incidents')">Incident Tracking or Reporting</button>
     </div>
 </body>
 </html>

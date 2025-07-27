@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "concurrently \"node server.js\" \"node authServer.js\""
+    "start": "concurrently \"nodemon server.js\" \"nodemon authServer.js\""
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

@@ -129,7 +129,7 @@
 
             try {
                 // First try to add staff
-                const staffResponse = await fetch('http://localhost:3000/staff', {
+                const staffResponse = await fetch('http://localhost:3001/staff', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -147,7 +147,7 @@
                 }
 
                 // Then try to add user
-                const userResponse = await fetch('http://localhost:3000/users', {
+                const userResponse = await fetch('http://localhost:3001/users', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

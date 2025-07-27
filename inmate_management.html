@@ -190,11 +190,11 @@
         <form id="editInmateForm" style="display: none;">
             <h3>Edit Inmate</h3>
             <input type="hidden" name="inmateId" id="inmateId" />
-            <input type="text" name="name" id="name" placeholder="Name" required />
+            <input type="text" name="name" id="name" placeholder="Full Name" required />
             <input type="text" name="crime" id="crime" placeholder="Crime" required />
             <input type="number" name="sentenceDuration" id="sentenceDuration" placeholder="Sentence Duration (years)" required />
             <input type="date" name="arrestDate" id="arrestDate" required />
-            <input type="text" name="cellNumber" id="cellNumber" pattern="[A-Z]-\d{3}" placeholder="Cell Number (e.g., C-101)" required />
+            <input type="text" name="cellNumber" id="cellNumber" pattern="[A-Z]-\d+" placeholder="Cell Number (e.g., C-101)" />
             <button type="submit">Update Inmate</button>
             <button type="button" onclick="closeEditInmateForm()">Cancel</button>
         </form>
@@ -290,7 +290,8 @@
                     name: document.getElementById("name").value,
                     crime: document.getElementById("crime").value,
                     sentenceDuration: document.getElementById("sentenceDuration").value,
-                    arrestDate: document.getElementById("arrestDate").value
+                    arrestDate: document.getElementById("arrestDate").value,
+                    cellNumber: document.getElementById("cellNumber").value
                 };
                 try {
                     const response = await fetch(`http://localhost:3000/inmates/${id}`, {
